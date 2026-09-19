@@ -1,0 +1,374 @@
+body {
+    background-color: var(--couleur-session, #f5f3ef);
+}
+
+#fond {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: linear-gradient(120deg,
+    var(--c1, #ff0000), var(--c2, #ff9900), var(--c3, #00cc44),
+    var(--c4, #0066ff), var(--c5, #cc00ff));   
+    background-size: 300% 300%;
+    animation: derive 12s ease infinite,; 
+   
+}
+
+@keyframes derive {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes fondu {
+    0%   { opacity: 1; }
+    100% { opacity: 0.3; }
+}
+
+
+#app {
+    display: flex;
+    min-height: 100vh;
+}
+
+#barre {
+    width: 180px;
+    padding: 40px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#contenu {
+    flex: 1;
+    padding: 40px;
+    max-width: 700px;
+}
+
+.onglet {
+    background: none;
+    color: #222;
+    border: none;
+    padding: 6px 0;
+    font-size: 15px;
+    letter-spacing: 1px;
+    opacity: 0.45;
+    transition: opacity 0.3s;
+}
+
+.onglet:hover {
+    opacity: 0.8;
+}
+
+.onglet-actif {
+    opacity: 1;
+    font-weight: bold;
+}
+
+section {
+    display: none;
+}
+
+section.active {
+    display: block;
+}
+
+
+
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    max-width: none;
+    margin: 0;
+    color: #222;
+}
+
+h1 {
+    font-size: 28px;
+    letter-spacing: 3px;
+}
+
+input, select {
+    padding: 8px;
+    margin: 4px 4px 4px 0;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 8px 14px;
+    margin-right: 4px;
+    background: #222;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.btn-supprimer, .btn-supprimer-tenue {
+    background: none;
+    color: #999;
+    border: 1px solid #ddd;
+    padding: 2px 7px;
+    font-size: 12px;
+}
+
+.bloc-categorie {
+    margin: 10px 0;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 3px;
+}
+
+.bloc-categorie summary {
+    cursor: pointer;
+    font-weight: bold;
+    letter-spacing: 1px;
+    padding: 4px 0;
+}
+
+.bloc-categorie h5 {
+    margin: 12px 0 4px 0;
+    font-weight: normal;
+    opacity: 0.6;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+#zone-frequence {
+    display: none;
+    margin: 16px 0;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.6);
+    border-left: 3px solid #222;
+}
+
+.piece {
+    cursor: pointer;
+    border-bottom: 1px dotted rgba(0, 0, 0, 0.4);
+}
+
+.piece:hover {
+    border-bottom-color: #222;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.tenue-freq {
+    margin: 12px 0;
+    padding: 10px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    line-height: 1.6;
+}
+
+.tenue-freq strong {
+    letter-spacing: 1px;
+}
+
+.piece-cible {
+    font-style: normal;
+    background: rgba(0, 0, 0, 0.08);
+    padding: 1px 5px;
+    border-radius: 2px;
+}
+
+#intro {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: var(--couleur-session, #f5f3ef);
+}
+
+#intro-titre {
+    text-align: center;
+    transition: opacity 1.2s;
+}
+
+#intro-titre h1 {
+    font-size: 64px;
+    letter-spacing: 12px;
+    margin: 0;
+}
+
+.intro-signature {
+    letter-spacing: 3px;
+    font-size: 13px;
+    opacity: 0.6;
+    margin-top: 12px;
+}
+
+.intro-invite {
+    font-size: 11px;
+    letter-spacing: 2px;
+    opacity: 0.35;
+    margin-top: 40px;
+    text-transform: uppercase;
+}
+
+#intro-texte {
+    display: none;
+    max-width: 520px;
+    padding: 40px;
+    line-height: 1.9;
+    opacity: 0;
+    transition: opacity 1.5s;
+}
+
+#intro-texte.visible {
+    opacity: 1;
+}
+
+#intro.efface {
+    opacity: 0;
+    transition: opacity 1s;
+    pointer-events: none;
+}
+
+#barre h1 {
+    opacity: 0;
+}
+
+#barre h1.arrive {
+    opacity: 1;
+    transition: opacity 1.4s;
+}
+
+#filtres-inventaire {
+    margin: 16px 0;
+}
+
+.bloc-filtre {
+    display: inline-block;
+    vertical-align: top;
+    margin: 4px 6px 4px 0;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 3px;
+}
+
+.bloc-filtre summary {
+    cursor: pointer;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+.filtre {
+    display: block;
+    margin: 4px 0;
+    padding: 4px 8px;
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.75);
+}
+
+#filtres-inventaire > .filtre {
+    display: inline-block;
+    margin-right: 6px;
+}
+
+#contenu h4 {
+    margin: 32px 0 12px 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 12px;
+    opacity: 0.55;
+}
+
+#contenu input[type="text"],
+#contenu select {
+    display: block;
+    width: 100%;
+    max-width: 340px;
+    margin: 6px 0;
+    padding: 9px 10px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.6);
+    font-family: inherit;
+    font-size: 14px;
+}
+
+#contenu select[multiple] {
+    padding: 4px;
+}
+
+#contenu button {
+    margin: 10px 6px 10px 0;
+}
+
+#liste-vetements li,
+#liste-tenues li {
+    line-height: 1.7;
+}
+
+.btn-modifier,
+.btn-modifier-tenue {
+    background: none;
+    color: #666;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    padding: 2px 7px;
+    font-size: 11px;
+}
+
+* {
+    cursor: none;
+}
+
+#curseur {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    background: #1a1a1a;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+}
+
+#curseur-anneau {
+    position: fixed;
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(26, 26, 26, 0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: width 0.18s, height 0.18s, border-color 0.18s, opacity 0.18s;
+}
+
+#curseur-anneau.actif {
+    width: 52px;
+    height: 52px;
+    border-color: rgba(26, 26, 26, 0.75);
+    animation: pulsation 0.9s infinite;
+}
+
+@keyframes pulsation {
+    0%   { transform: translate(-50%, -50%) scale(1); }
+    50%  { transform: translate(-50%, -50%) scale(1.12); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+*, *::before, *::after,
+a, button, input, select, textarea, summary, label {
+    cursor: none !important;
+}
+

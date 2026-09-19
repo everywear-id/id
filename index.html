@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>I_D</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="fond"></div>
+
+    <div id="intro">
+
+        <div id="intro-titre">
+            <h1>I_D</h1>
+            <p class="intro-signature">wear as we are everywear</p>
+            <p class="intro-invite">cliquez</p>
+        </div>
+
+        <div id="intro-texte">
+            <p>Texte du concept à venir.</p>
+            <p>Deuxième paragraphe.</p>
+            <p>Troisième paragraphe.</p>
+            <p class="intro-invite">cliquez pour entrer</p>
+        </div>
+
+    </div>
+
+    <div id="app">
+
+        <nav id="barre">
+            <h1>I_D</h1>
+            <button class="onglet" data-section="tenues">Tenues</button>
+            <button class="onglet" data-section="inventaire">Inventaire</button>
+            <button class="onglet" data-section="communaute">Communauté</button>
+        </nav>
+
+        <main id="contenu">
+
+            <section id="section-tenues">
+
+                <h4>Créer une tenue</h4>
+                <input id="champ-tenue-nom" type="text" placeholder="Nom de la tenue">
+                <div id="zone-tenue-vetements"></div>
+                <select id="champ-occasion">
+                    <option value="">Occasion...</option>
+                    <option value="Quotidien">Quotidien</option>
+                    <option value="Travail">Travail</option>
+                    <option value="Date">Date</option>
+                    <option value="Soiree">Soirée</option>
+                    <option value="Sophistiqué">Sophistiqué</option>
+                    <option value="Sport">Sport</option>
+                </select>
+
+                <select id="champ-saison" multiple size="4">
+                    <option value="Printemps">Printemps</option>
+                    <option value="Été">Été</option>
+                    <option value="Automne">Automne</option>
+                    <option value="Hiver">Hiver</option>
+                </select>
+
+                <select id="champ-registre">
+                    <option value="">Registre...</option>
+                    <option value="Décontracté">Décontracté</option>
+                    <option value="Intermédiaire">Intermédiaire</option>
+                    <option value="Habillé">Habillé</option>
+                </select>
+
+                <select id="champ-eclat">
+                    <option value="">Éclat...</option>
+                    <option value="Discret">Discret</option>
+                    <option value="Équilibré">Équilibré</option>
+                    <option value="Affirmé">Affirmé</option>
+                </select>
+                <button id="btn-creer-tenue">Créer</button>
+                <button id="btn-annuler-tenue" style="display:none">Annuler</button>
+
+                <h4>Rechercher une tenue</h4>
+
+                <select id="rech-occasion">
+                    <option value="">Toute occasion</option>
+                    <option value="Quotidien">Quotidien</option>
+                    <option value="Travail">Travail</option>
+                    <option value="Date">Date</option>
+                    <option value="Soirée">Soirée</option>
+                    <option value="Cérémonie">Cérémonie</option>
+                    <option value="Sport">Sport</option>
+                </select>
+
+                <select id="rech-saison">
+                    <option value="">Toute saison</option>
+                    <option value="Printemps">Printemps</option>
+                    <option value="Été">Été</option>
+                    <option value="Automne">Automne</option>
+                    <option value="Hiver">Hiver</option>
+                </select>
+
+                <select id="rech-registre">
+                    <option value="">Tout registre</option>
+                    <option value="Décontracté">Décontracté</option>
+                    <option value="Intermédiaire">Intermédiaire</option>
+                    <option value="Habillé">Habillé</option>
+                </select>
+
+                <select id="rech-eclat">
+                    <option value="">Tout éclat</option>
+                    <option value="Discret">Discret</option>
+                    <option value="Équilibré">Équilibré</option>
+                    <option value="Affirmé">Affirmé</option>
+                </select>
+
+                <button id="btn-rechercher">Rechercher</button>
+                <button id="btn-reset">Tout voir</button>
+
+                <div id="zone-frequence"></div>
+
+                <ul id="liste-tenues"></ul>
+
+            </section>
+
+            <section id="section-inventaire">
+
+                <h4>Ajouter un vêtement</h4>
+                <input id="champ-nom" type="text" placeholder="Nom du vêtement">
+                <select id="champ-categorie">
+                    <option value="">Catégorie...</option>
+                    <option value="Haut">Haut</option>
+                    <option value="Pantalon">Pantalon</option>
+                    <option value="Chaussure">Chaussure</option>
+                    <option value="Accessoire">Accessoires</option>
+                </select>
+
+                <select id="champ-sous-categorie">
+                    <option value="">—</option>
+                </select>
+
+                <select id="champ-couleur" multiple size="6">
+                    <option value="Noir">Noir</option>
+                    <option value="Blanc">Blanc</option>
+                    <option value="Gris">Gris</option>
+                    <option value="Beige">Beige</option>
+                    <option value="Brun">Brun</option>
+                    <option value="Bleu">Bleu</option>
+                    <option value="Vert">Vert</option>
+                    <option value="Rouge">Rouge</option>
+                    <option value="Rose">Rose</option>
+                    <option value="Violet">Violet</option>
+                    <option value="Jaune">Jaune</option>
+                    <option value="Orange">Orange</option>
+                    <option value="Métallique">Métallique</option>
+                </select>
+                <input id="champ-nuance" type="text" placeholder="Nuance (pistache, terracotta...)">
+                <input id="champ-matiere" type="text" placeholder="Matière">
+                <input id="champ-marque" type="text" placeholder="Marque">
+                <button id="btn-ajouter">Ajouter</button>
+                <button id="btn-annuler" style="display:none">Annuler</button>
+
+                <h4>Mes vêtements</h4>
+
+                <div id="filtres-inventaire"></div>
+
+                <ul id="liste-vetements"></ul>
+
+                <h4>Sauvegarde</h4>
+                <button id="btn-exporter">Exporter mes données</button>
+                <input type="file" id="champ-importer" accept=".json">
+
+            </section>
+
+            <section id="section-communaute">
+                <h4>Communauté</h4>
+                <p>Le fruit de l'échange. À venir.</p>
+            </section>
+
+        </main>
+
+    </div>
+
+    <div id="curseur"></div>
+    <div id="curseur-anneau"></div>
+    <script src="app.js"></script>
+
+</body>
+</html>
