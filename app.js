@@ -1,3 +1,8 @@
+const SUPABASE_URL = "https://jragildtoksjhnwbktuf.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpyYWdpbGR0b2tzamhud2JrdHVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3ODQ1NjgsImV4cCI6MjEwNTM2MDU2OH0._QdwF5gvPPSqeE4Prfg1fTNZ-hLxP4pf8pf6ae-8kXU";
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 let teinte = Math.floor(Math.random() * 360);
 
 function couleursDeLaTeinte(t) {
