@@ -25,23 +25,7 @@ let derive = setInterval(function() {
     appliquerTeinte();
 }, 200);
 
-let vetements = [
-    { id: 1, nom: "Pantalon velours vert", categorie: "Pantalon", couleur: ["Vert"], nuance: "", matiere: "Velours", marque: "Avenue Louise" },
-    { id: 2,nom: "Chaussures daim brun", categorie: "Chaussure", couleur: ["Brun"], nuance: "", matiere: "Daim", marque: "Suitsupply" },
-    { id: 3,nom: "Sur-chemise", categorie: "Haut", couleur: ["Noir"], nuance: "", matiere: "", marque: "Believe NYC" },
-    { id: 4,nom: "Pant Carhartt", categorie: "Pantalon", couleur: ["Violet"], nuance: "mauve", matiere: "", marque: "Carhartt" },
-    { id: 5,nom: "Haut à col rond", categorie: "Haut", couleur: ["Rose"], nuance: "", matiere: "", marque: "Suitsupply" },
-    { id: 6,nom: "Veste Levi's", categorie: "Haut", couleur: ["Bleu"], nuance: "", matiere: "", marque: "Levi's" },
-    { id: 7,nom: "Chaussure NB", categorie: "Chaussure", couleur: ["Blanc", "Brun"], nuance: "blanc cassé", matiere: "", marque: "New Balance" },
-    { id: 8,nom: "Pant brun Berg", categorie: "Pantalon", couleur: ["Brun"], nuance: "", matiere: "", marque: "Berg & Berg" },
-    { id: 9,nom: "Mocassin pistache à couture", categorie: "Chaussure", couleur: ["Vert"], nuance: "pistache", matiere: "", marque: "Grenson" },
-    { id: 10,nom: "Polo à col rond", categorie: "Haut", couleur: ["Vert"], nuance: "pistache pâle", matiere: "", marque: "Suitsupply" },
-    { id: 11,nom: "Jeans Momotaro", categorie: "Pantalon", couleur: ["Bleu"], nuance: "", matiere: "Denim", marque: "Momotaro" },
-    { id: 12,nom: "Pull fluo", categorie: "Haut", couleur: ["Vert"], nuance: "fluo", matiere: "", marque: "H&M" },
-    { id: 13,nom: "Pull terracotta", categorie: "Haut", couleur: ["Brun"], nuance: "terracotta", matiere: "Coton", marque: "Superdry" }
-    
-   
-];
+let vetements = [];
 
 let sauvegarde = localStorage.getItem("vetements");
 if (sauvegarde !== null) {
