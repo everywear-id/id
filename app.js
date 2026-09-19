@@ -708,3 +708,4 @@ function nomCliquable(id) {
     }
     return "<span class='piece' data-id='" + trouve[0].id + "'>" + trouve[0].nom + "</span>";
 }
+
