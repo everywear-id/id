@@ -31,19 +31,6 @@ let derive = setInterval(function() {
 }, 200);
 
 let vetements = [];
-
-let sauvegarde = localStorage.getItem("vetements");
-if (sauvegarde !== null) {
-    vetements = JSON.parse(sauvegarde);
-}
-
-let prochainId = 1;
-for (let i = 0; i < vetements.length; i++) {
-    if (vetements[i].id >= prochainId) {
-        prochainId = vetements[i].id + 1;
-    }
-}
-
 let idEnModification = null;
 let idTenueEnModification = null;
 
@@ -110,9 +97,6 @@ function afficher(items) {
     activerSuppression();
     activerModification();
 }
-
-
-afficher(vetements);
 
 btnAjouter.addEventListener("click", function() {
     if (idEnModification !== null) {
@@ -297,7 +281,6 @@ function casesPour(liste) {
     return texte;
 }
 
-remplirMenuVetements();
 
 btnCreerTenue.addEventListener("click", function() {
     if (champTenueNom.value === "") {
@@ -657,8 +640,6 @@ function appliquerFiltre(type, valeur) {
     afficher(resultat);
 }
 
-construireFiltres();
-
 let curseur = document.getElementById("curseur");
 let anneau = document.getElementById("curseur-anneau");
 let cibleX = 0;
@@ -709,3 +690,34 @@ function nomCliquable(id) {
     return "<span class='piece' data-id='" + trouve[0].id + "'>" + trouve[0].nom + "</span>";
 }
 
+async function chargerVetements() {
+    let reponse = await db.from("vetements").select("*").order("nom");
+
+    if (reponse.error) {
+        console.log("Erreur de chargement :", reponse.error.message);
+        alert("Impossible de charger les vêtements.");
+        return;
+    }
+
+    vetements = reponse.data.map(function(v) {
+        return {
+            id: v.id,
+            nom: v.nom,
+            categorie: v.categorie,
+            sousCategorie: v.sous_categorie,
+            couleur: v.couleur || [],
+            nuance: v.nuance,
+            matiere: v.matiere,
+            marque: v.marque
+        };
+    });
+}
+
+async function demarrer() {
+    await chargerVetements();
+    afficher(vetements);
+    remplirMenuVetements();
+    construireFiltres();
+}
+
+demarrer();
