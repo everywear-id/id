@@ -697,6 +697,7 @@ async function lancer() {
 async function ajouterVetement(v) {
     let reponse = await db.from("vetements").insert({
         nom: v.nom,
+        proprietaire: utilisateur.id, 
         categorie: v.categorie || null,
         sous_categorie: v.sousCategorie || null,
         couleur: v.couleur || [],
@@ -773,6 +774,7 @@ async function chargerTenues() {
 async function enregistrerTenue(t, id) {
     let donnees = {
         nom: t.nom,
+        proprietaire: utilisateur.id,
         occasion: t.occasion || null,
         saison: t.saison || [],
         registre: t.registre || null,
