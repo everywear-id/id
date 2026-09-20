@@ -185,32 +185,17 @@ function activerModification() {
 function activerSuppressionTenues() {
     let boutons = document.querySelectorAll(".btn-supprimer-tenue");
     for (let i = 0; i < boutons.length; i++) {
-        boutons[i].addEventListener("click", function() {
+                boutons[i].addEventListener("click", async function() {
             let id = Number(this.getAttribute("data-id"));
-            tenues = tenues.filter(function(t) {
-                return t.id !== id;
-            });
-            sauvegarderTenues(tenues);
-            afficherTenues(tenues);
+            let ok = await supprimerTenue(id);
+            if (ok) {
+                await rafraichirTenues();
+            }
         });
     }
 }
 
 let tenues = [];
-
-
-
-let sauvegardeTenues = localStorage.getItem("tenues");
-if (sauvegardeTenues !== null) {
-    tenues = JSON.parse(sauvegardeTenues);
-}
-
-let prochainIdTenue = 1;
-for (let i = 0; i < tenues.length; i++) {
-    if (tenues[i].id >= prochainIdTenue) {
-        prochainIdTenue = tenues[i].id + 1;
-    }
-}
 
 function remplirMenuVetements() {
     zoneTenueVetements.innerHTML = "";
@@ -263,9 +248,9 @@ function casesPour(liste) {
 }
 
 
-btnCreerTenue.addEventListener("click", function() {
+btnCreerTenue.addEventListener("click", async function() {
     if (champTenueNom.value === "") {
-        alert("Pour se confectionner des tenues sans nom, DONNEZ UN NOM À LA TENUE");
+        alert("Donnez un nom à la tenue.");
         return;
     }
 
@@ -283,44 +268,25 @@ btnCreerTenue.addEventListener("click", function() {
         }
     }
 
-        if (idTenueEnModification !== null) {
-        for (let i = 0; i < tenues.length; i++) {
-            if (tenues[i].id === idTenueEnModification) {
-                tenues[i].nom = champTenueNom.value;
-                tenues[i].vetementIds = idsSelectionnes;
-                tenues[i].occasion = champOccasion.value;
-                tenues[i].saison = Array.from(champSaison.selectedOptions).map(function(o) {
-                    return o.value;
-                });
-                tenues[i].registre = champRegistre.value;
-                tenues[i].eclat = champEclat.value;
-            }
-        }
-    }
-    else {
-        let nouvelleTenue = {
-            id: prochainIdTenue,
-            nom: champTenueNom.value,
-            vetementIds: idsSelectionnes,
-            occasion: champOccasion.value,
-            saison: Array.from(champSaison.selectedOptions).map(function(o) {
-                return o.value;
-            }),
-            registre: champRegistre.value,
-            eclat: champEclat.value
-        };
-        prochainIdTenue = prochainIdTenue + 1;
-        tenues.push(nouvelleTenue);
+    let saisie = {
+        nom: champTenueNom.value,
+        vetementIds: idsSelectionnes,
+        occasion: champOccasion.value,
+        saison: Array.from(champSaison.selectedOptions).map(function(o) {
+            return o.value;
+        }),
+        registre: champRegistre.value,
+        eclat: champEclat.value
+    };
+
+    let ok = await enregistrerTenue(saisie, idTenueEnModification);
+    if (!ok) {
+        return;
     }
 
-    sauvegarderTenues();
-    afficherTenues(tenues);
+    await rafraichirTenues();
     sortirDeModificationTenue();
 });
-
-function sauvegarderTenues() {
-    localStorage.setItem("tenues", JSON.stringify(tenues));
-}
 
 btnRechercher.addEventListener("click", function() {
     let resultat = tenues.filter(function(t) {
@@ -695,7 +661,9 @@ async function chargerVetements() {
 
 async function demarrer() {
     await chargerVetements();
+    await chargerTenues();
     afficher(vetements);
+    afficherTenues(tenues);
     remplirMenuVetements();
     construireFiltres();
 }
@@ -750,4 +718,86 @@ async function rafraichirVetements() {
     afficher(vetements);
     remplirMenuVetements();
     construireFiltres();
+}
+
+async function chargerTenues() {
+    let reponse = await db
+        .from("tenues")
+        .select("*, tenue_vetements(vetement_id)")
+        .order("nom");
+
+    if (reponse.error) {
+        console.log("Erreur tenues :", reponse.error.message);
+        return;
+    }
+
+    tenues = reponse.data.map(function(t) {
+        return {
+            id: t.id,
+            nom: t.nom,
+            occasion: t.occasion,
+            saison: t.saison || [],
+            registre: t.registre,
+            eclat: t.eclat,
+            vetementIds: t.tenue_vetements.map(function(lien) {
+                return lien.vetement_id;
+            })
+        };
+    });
+}
+
+async function enregistrerTenue(t, id) {
+    let donnees = {
+        nom: t.nom,
+        occasion: t.occasion || null,
+        saison: t.saison || [],
+        registre: t.registre || null,
+        eclat: t.eclat || null
+    };
+
+    let idTenue = id;
+
+    if (id === null) {
+        let creation = await db.from("tenues").insert(donnees).select();
+        if (creation.error) {
+            alert("Impossible de créer : " + creation.error.message);
+            return false;
+        }
+        idTenue = creation.data[0].id;
+    } else {
+        let maj = await db.from("tenues").update(donnees).eq("id", id);
+        if (maj.error) {
+            alert("Impossible de modifier : " + maj.error.message);
+            return false;
+        }
+        await db.from("tenue_vetements").delete().eq("tenue_id", id);
+    }
+
+    let paires = t.vetementIds.map(function(vid) {
+        return { tenue_id: idTenue, vetement_id: vid };
+    });
+
+    if (paires.length > 0) {
+        let liaison = await db.from("tenue_vetements").insert(paires);
+        if (liaison.error) {
+            alert("Erreur sur la composition : " + liaison.error.message);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+async function supprimerTenue(id) {
+    let reponse = await db.from("tenues").delete().eq("id", id);
+    if (reponse.error) {
+        alert("Impossible de supprimer : " + reponse.error.message);
+        return false;
+    }
+    return true;
+}
+
+async function rafraichirTenues() {
+    await chargerTenues();
+    afficherTenues(tenues);
 }
