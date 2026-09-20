@@ -98,49 +98,38 @@ function afficher(items) {
     activerModification();
 }
 
-btnAjouter.addEventListener("click", function() {
-    if (idEnModification !== null) {
-        for (let i = 0; i < vetements.length; i++) {
-            if (vetements[i].id === idEnModification) {
-                vetements[i].nom = champNom.value;
-                vetements[i].categorie = champCategorie.value;
-                vetements[i].sousCategorie = champSousCategorie.value;
-                vetements[i].couleur = Array.from(champCouleur.selectedOptions).map(function(o) {
-                    return o.value;
-                });
-                vetements[i].nuance = champNuance.value;
-                vetements[i].matiere = champMatiere.value;
-                vetements[i].marque = champMarque.value;
-            }
-        }
-                sortirDeModification();
-    } 
-    else {
-        let nouveauVetement = {
-            id: prochainId,
-            nom: champNom.value,
-            categorie: champCategorie.value,
-            sousCategorie: champSousCategorie.value,            
-            couleur: Array.from(champCouleur.selectedOptions).map(function(o) {
-                return o.value;
-            }),
-            nuance: champNuance.value,
-            matiere: champMatiere.value,
-            marque: champMarque.value
-        };
-        prochainId = prochainId + 1;
-        vetements.push(nouveauVetement);
+btnAjouter.addEventListener("click", async function() {
+    if (champNom.value === "") {
+        alert("Donnez un nom au vêtement.");
+        return;
     }
 
-    construireFiltres();
-    sauvegarder();
-    afficher(vetements);
-    remplirMenuVetements();
+    let saisie = {
+        nom: champNom.value,
+        categorie: champCategorie.value,
+        sousCategorie: champSousCategorie.value,
+        couleur: Array.from(champCouleur.selectedOptions).map(function(o) {
+            return o.value;
+        }),
+        nuance: champNuance.value,
+        matiere: champMatiere.value,
+        marque: champMarque.value
+    };
 
-    champNom.value = "";
-    champNuance.value = "";
-    champMatiere.value = "";
-    champMarque.value = "";
+    let ok;
+    if (idEnModification !== null) {
+        ok = await modifierVetement(idEnModification, saisie);
+    } else {
+        ok = await ajouterVetement(saisie);
+    }
+
+    if (!ok) {
+        return;
+    }
+
+    await rafraichirVetements();
+    sortirDeModification();
+
     for (let j = 0; j < champCouleur.options.length; j++) {
         champCouleur.options[j].selected = false;
     }
@@ -149,16 +138,12 @@ btnAjouter.addEventListener("click", function() {
 function activerSuppression() {
     let boutons = document.querySelectorAll(".btn-supprimer");
     for (let i = 0; i < boutons.length; i++) {
-        boutons[i].addEventListener("click", function() {
+                boutons[i].addEventListener("click", async function() {
             let id = Number(this.getAttribute("data-id"));
-            vetements = vetements.filter(function(v) {
-                return v.id !== id;
-            });
-
-            construireFiltres();
-            sauvegarder();
-            afficher(vetements);
-            remplirMenuVetements();
+            let ok = await supprimerVetement(id);
+            if (ok) {
+                await rafraichirVetements();
+            }
         });
     }
 }
@@ -209,10 +194,6 @@ function activerSuppressionTenues() {
             afficherTenues(tenues);
         });
     }
-}
-
-function sauvegarder() {
-    localStorage.setItem("vetements", JSON.stringify(vetements));
 }
 
 let tenues = [];
@@ -383,7 +364,6 @@ champImporter.addEventListener("change", function() {
         let donnees = JSON.parse(lecteur.result);
         vetements = donnees.vetements;
         tenues = donnees.tenues;
-        sauvegarder();
         sauvegarderTenues();
         afficher(vetements);
         afficherTenues(tenues);
@@ -721,3 +701,53 @@ async function demarrer() {
 }
 
 demarrer();
+
+async function ajouterVetement(v) {
+    let reponse = await db.from("vetements").insert({
+        nom: v.nom,
+        categorie: v.categorie || null,
+        sous_categorie: v.sousCategorie || null,
+        couleur: v.couleur || [],
+        nuance: v.nuance || null,
+        matiere: v.matiere || null,
+        marque: v.marque || null
+    });
+    if (reponse.error) {
+        alert("Impossible d'ajouter : " + reponse.error.message);
+        return false;
+    }
+    return true;
+}
+
+async function modifierVetement(id, v) {
+    let reponse = await db.from("vetements").update({
+        nom: v.nom,
+        categorie: v.categorie || null,
+        sous_categorie: v.sousCategorie || null,
+        couleur: v.couleur || [],
+        nuance: v.nuance || null,
+        matiere: v.matiere || null,
+        marque: v.marque || null
+    }).eq("id", id);
+    if (reponse.error) {
+        alert("Impossible de modifier : " + reponse.error.message);
+        return false;
+    }
+    return true;
+}
+
+async function supprimerVetement(id) {
+    let reponse = await db.from("vetements").delete().eq("id", id);
+    if (reponse.error) {
+        alert("Impossible de supprimer : " + reponse.error.message);
+        return false;
+    }
+    return true;
+}
+
+async function rafraichirVetements() {
+    await chargerVetements();
+    afficher(vetements);
+    remplirMenuVetements();
+    construireFiltres();
+}
