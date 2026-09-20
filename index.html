@@ -9,6 +9,39 @@
 
     <div id="fond"></div>
 
+    <div id="ecran-connexion">
+        <div id="bloc-connexion">
+        <h2>I_D</h2>
+
+            <div id="mode-connexion">
+                <input id="champ-email" type="email" placeholder="Adresse e-mail">
+                <input id="champ-motdepasse" type="password" placeholder="Mot de passe">
+                <button id="btn-connexion">Se connecter</button>
+                <button id="btn-vers-inscription">Créer un compte</button>
+            </div>
+
+            <div id="mode-inscription">
+                <input id="champ-email-inscription" type="email" placeholder="Adresse e-mail">
+
+                <div id="zone-pastilles"></div>
+                <p id="noms-couleurs"></p>
+
+                <button id="btn-relancer">Une autre proposition</button>
+                <button id="btn-valider-couleurs">C'est celle-ci</button>
+
+                <div id="zone-ressaisie">
+                    <p class="consigne">Retapez les trois noms, séparés par des tirets.</p>
+                    <input id="champ-ressaisie" type="text" placeholder="couleur-couleur-couleur-00">
+                    <button id="btn-confirmer">Créer mon compte</button>
+                </div>
+
+                <button id="btn-vers-connexion">J'ai déjà un compte</button>
+            </div>
+
+            <p id="message-connexion"></p>
+        </div>
+    </div>
+
     <div id="intro">
 
         <div id="intro-titre">
@@ -33,6 +66,7 @@
             <button class="onglet" data-section="tenues">Tenues</button>
             <button class="onglet" data-section="inventaire">Inventaire</button>
             <button class="onglet" data-section="communaute">Communauté</button>
+            <button id="btn-deconnexion">Se déconnecter</button>
         </nav>
 
         <main id="contenu">
@@ -125,14 +159,14 @@
                 <select id="champ-categorie">
                     <option value="">Catégorie...</option>
                     <option value="Haut">Haut</option>
-                    <option value="Pantalon">Pantalon</option>
+                    <option value="Bas">Bas</option>
+                    <option value="Pièce entière">Pièce entière</option>
                     <option value="Chaussure">Chaussure</option>
-                    <option value="Accessoire">Accessoires</option>
+                    <option value="Accessoire">Accessoire</option>
                 </select>
 
-                <select id="champ-sous-categorie">
-                    <option value="">—</option>
-                </select>
+                <input id="champ-sous-categorie" type="text" list="liste-sous-categories" placeholder="Sous-catégorie">
+                <datalist id="liste-sous-categories"></datalist>
 
                 <select id="champ-couleur" multiple size="6">
                     <option value="Noir">Noir</option>
@@ -150,7 +184,18 @@
                     <option value="Métallique">Métallique</option>
                 </select>
                 <input id="champ-nuance" type="text" placeholder="Nuance (pistache, terracotta...)">
-                <input id="champ-matiere" type="text" placeholder="Matière">
+                <input id="champ-matiere" type="text" list="liste-matieres" placeholder="Matière">
+                    <datalist id="liste-matieres">
+                        <option value="Coton"><option value="Lin"><option value="Chanvre"><option value="Ramie"><option value="Jute">
+                        <option value="Laine"><option value="Mérinos"><option value="Cachemire"><option value="Mohair"><option value="Alpaga"><option value="Angora"><option value="Soie">
+                        <option value="Cuir"><option value="Daim"><option value="Nubuck"><option value="Simili cuir"><option value="Cuir vegan">
+                        <option value="Viscose"><option value="Modal"><option value="Lyocell"><option value="Cupro"><option value="Bambou">
+                        <option value="Polyester"><option value="Nylon"><option value="Polyamide"><option value="Acrylique"><option value="Élasthanne"><option value="Polyuréthane">
+                        <option value="Denim"><option value="Velours"><option value="Velours côtelé"><option value="Tweed"><option value="Flanelle"><option value="Popeline"><option value="Oxford"><option value="Gabardine"><option value="Twill">
+                        <option value="Jersey"><option value="Maille"><option value="Crêpe"><option value="Satin"><option value="Mousseline"><option value="Dentelle"><option value="Feutre"><option value="Molleton"><option value="Éponge">
+                        <option value="Toile"><option value="Canvas"><option value="Seersucker"><option value="Chambray"><option value="Piqué">
+                        <option value="Gore-Tex"><option value="Softshell"><option value="Polaire"><option value="Néoprène">
+                    </datalist>
                 <input id="champ-marque" type="text" placeholder="Marque">
                 <button id="btn-ajouter">Ajouter</button>
                 <button id="btn-annuler" style="display:none">Annuler</button>
@@ -163,7 +208,6 @@
 
                 <h4>Sauvegarde</h4>
                 <button id="btn-exporter">Exporter mes données</button>
-                <input type="file" id="champ-importer" accept=".json">
 
             </section>
 

@@ -10,17 +10,20 @@ body {
     height: 100%;
     z-index: -1;
     background: linear-gradient(120deg,
-    var(--c1, #ff0000), var(--c2, #ff9900), var(--c3, #00cc44),
-    var(--c4, #0066ff), var(--c5, #cc00ff));   
+        var(--c1, #f5f3ef), var(--c2, #e8e4dc), var(--c3, #d8d2c8),
+        var(--c4, #c8c0b4), var(--c5, #b8aea0));
     background-size: 300% 300%;
-    animation: derive 12s ease infinite,; 
-   
+    animation: respiration 25s ease-in-out infinite;
+    transition: background-image 1.5s ease;
 }
 
-@keyframes derive {
-    0%   { background-position: 0% 50%; }
-    50%  { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+@keyframes respiration {
+    0%   { background-position: 0% 30%; }
+    20%  { background-position: 70% 10%; }
+    40%  { background-position: 100% 60%; }
+    60%  { background-position: 40% 90%; }
+    80%  { background-position: 10% 45%; }
+    100% { background-position: 0% 30%; }
 }
 
 @keyframes fondu {
@@ -195,7 +198,7 @@ li {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    background: var(--couleur-session, #f5f3ef);
+    background: #f5f3ef;
 }
 
 #intro-titre {
@@ -372,3 +375,130 @@ a, button, input, select, textarea, summary, label {
     cursor: none !important;
 }
 
+#ecran-connexion {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.55);
+}
+
+#ecran-connexion.visible {
+    display: flex;
+}
+
+#bloc-connexion {
+    width: 280px;
+    text-align: center;
+}
+
+#bloc-connexion h2 {
+    letter-spacing: 10px;
+    margin-bottom: 30px;
+}
+
+#bloc-connexion input {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    padding: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.6);
+    font-family: inherit;
+}
+
+#bloc-connexion button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+}
+
+#btn-inscription {
+    background: none;
+    color: #444;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+#message-connexion {
+    font-size: 12px;
+    margin-top: 16px;
+    min-height: 20px;
+    opacity: 0.7;
+}
+
+#btn-deconnexion {
+    margin-top: auto;
+    background: none;
+    color: #222;
+    border: none;
+    font-size: 12px;
+    opacity: 0.4;
+    padding: 6px 0;
+}
+
+#mode-inscription {
+    display: none;
+}
+
+#zone-ressaisie {
+    display: none;
+}
+
+#zone-pastilles {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 24px 0 12px 0;
+}
+
+.pastille {
+    width: 52px;
+    height: 52px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#noms-couleurs {
+    font-size: 14px;
+    letter-spacing: 1px;
+    min-height: 20px;
+    margin-bottom: 16px;
+}
+
+.consigne {
+    font-size: 11px;
+    opacity: 0.6;
+    margin: 20px 0 8px 0;
+    line-height: 1.5;
+}
+
+#btn-relancer,
+#btn-vers-inscription,
+#btn-vers-connexion {
+    background: none;
+    color: #444;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+#bloc-connexion h2 {
+    text-align: center;
+}
+
+#bloc-connexion input {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+#bloc-connexion button {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    box-sizing: border-box;
+}
