@@ -149,8 +149,7 @@ btnAjouter.addEventListener("click", async function() {
         }),
         nuance: champNuance.value,
         matiere: champMatiere.value,
-        marque: champMarque.value
-    };
+        marque: marqueUniformisee(champMarque.value)    };
 
     let ok;
     if (idEnModification !== null) {
@@ -685,6 +684,7 @@ async function demarrer() {
     afficherTenues(tenues);
     remplirMenuVetements();
     construireFiltres();
+    remplirListeMarques();
 }
 
 async function lancer() {
@@ -743,6 +743,7 @@ async function rafraichirVetements() {
     afficher(vetements);
     remplirMenuVetements();
     construireFiltres();
+    remplirListeMarques();
 }
 
 async function chargerTenues() {
@@ -964,6 +965,41 @@ async function verifierSession() {
     document.getElementById("app").style.display = "none";
     ecranConnexion.classList.add("visible");
     return false;
+}
+
+function cleMarque(texte) {
+    return (texte || "")
+        .toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "");
+}
+
+function marquesConnues() {
+    let parCle = {};
+    for (let i = 0; i < vetements.length; i++) {
+        let m = vetements[i].marque;
+        if (!m) { continue; }
+        let cle = cleMarque(m);
+        if (!parCle[cle]) { parCle[cle] = m; }
+    }
+    return parCle;
+}
+
+function remplirListeMarques() {
+    let laListe = document.getElementById("liste-marques");
+    let noms = Object.values(marquesConnues()).sort();
+    laListe.innerHTML = "";
+    for (let i = 0; i < noms.length; i++) {
+        laListe.innerHTML = laListe.innerHTML + "<option value=\"" + noms[i] + "\">";
+    }
+}
+
+function marqueUniformisee(texte) {
+    let propre = (texte || "").trim();
+    if (propre === "") { return ""; }
+    let cle = cleMarque(propre);
+    let parCle = marquesConnues();
+    return parCle[cle] ? parCle[cle] : propre;
 }
 
 let nuancier = [
