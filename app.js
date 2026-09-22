@@ -5,34 +5,32 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let derive = null;
 
-function couleurAdoucie(hsl, luminosite) {
-    let parties = hsl.replace("hsl(", "").replace(")", "").split(",");
-    let h = Number(parties[0]);
-    let s = Number(parties[1].replace("%", ""));
-    return "hsl(" + h + ", " + Math.round(s * 0.55) + "%, " + luminosite + "%)";
+function teinteDe(hsl) {
+    return Number(hsl.replace("hsl(", "").split(",")[0]);
+}
+
+function ecartTeinte(a, b) {
+    let d = Math.abs(a - b) % 360;
+    return d > 180 ? 360 - d : d;
 }
 
 function tirerAmbiance() {
-    let combien = Math.floor(Math.random() * 3) + 2;
     let choisies = [];
+    let essais = 0;
 
-    while (choisies.length < combien) {
+    while (choisies.length < 3 && essais < 500) {
+        essais = essais + 1;
         let tirage = nuancier[Math.floor(Math.random() * nuancier.length)];
-        let dejaLa = choisies.filter(function(c) { return c.nom === tirage.nom; });
-        if (dejaLa.length === 0) {
+        let h = teinteDe(tirage.hsl);
+        let tropProche = choisies.filter(function(c) {
+            return ecartTeinte(teinteDe(c.hsl), h) < 40;
+        });
+        if (tropProche.length === 0) {
             choisies.push(tirage);
         }
     }
 
-    let luminosites = [94, 68, 88, 74, 82];
-    let couleurs = [];
-
-    for (let i = 0; i < 5; i++) {
-        let source = choisies[i % choisies.length];
-        couleurs.push(couleurAdoucie(source.hsl, luminosites[i]));
-    }
-
-    return couleurs;
+    return [choisies[0].hsl, choisies[1].hsl, choisies[2].hsl, choisies[0].hsl, choisies[1].hsl];
 }
 
 function appliquerAmbiance(couleurs) {
@@ -67,6 +65,7 @@ fondNeutre();
 let vetements = [];
 let idEnModification = null;
 let idTenueEnModification = null;
+let positionAvantModif = 0;
 
 let sousCategories = {
     "Haut": ["T-shirt", "Chemise", "Chemisier", "Blouse", "Polo", "Pull", "Gilet", "Cardigan", "Sweat", "Débardeur", "Top", "Body", "Bustier", "Veste", "Blazer", "Manteau", "Trench", "Parka", "Doudoune", "K-way", "Maillot de sport"],
@@ -144,9 +143,8 @@ btnAjouter.addEventListener("click", async function() {
         nom: champNom.value,
         categorie: champCategorie.value,
         sousCategorie: champSousCategorie.value,
-        couleur: Array.from(champCouleur.selectedOptions).map(function(o) {
-            return o.value;
-        }),
+        couleur: champCouleur.value ? [champCouleur.value] : [],
+        teinte: teinteChoisie || null,
         nuance: champNuance.value,
         matiere: champMatiere.value,
         marque: marqueUniformisee(champMarque.value)    };
@@ -164,10 +162,6 @@ btnAjouter.addEventListener("click", async function() {
 
     await rafraichirVetements();
     sortirDeModification();
-
-    for (let j = 0; j < champCouleur.options.length; j++) {
-        champCouleur.options[j].selected = false;
-    }
 });
 
 function activerSuppression() {
@@ -201,13 +195,9 @@ function activerModification() {
             champMatiere.value = v.matiere;
             champMarque.value = v.marque;
 
-            for (let j = 0; j < champCouleur.options.length; j++) {
-                if (v.couleur.indexOf(champCouleur.options[j].value) === -1) {
-                    champCouleur.options[j].selected = false;
-                } else {
-                    champCouleur.options[j].selected = true;
-                }
-            }
+            champCouleur.value = v.couleur[0] || "";
+            teinteChoisie = v.teinte || "";
+            afficherNuances(champCouleur.value);
 
             idEnModification = id;
             btnAjouter.innerHTML = "Enregistrer";
@@ -338,16 +328,19 @@ btnRechercher.addEventListener("click", function() {
         }
         return true;
     });
+    document.getElementById("bloc-tenues").open = true;
     afficherTenues(resultat);
 });
 
 btnReset.addEventListener("click", function() {
+    document.getElementById("bloc-tenues").open = true;
     afficherTenues(tenues);
 });
 
 function afficherTenues(items) {
     listeTenues.innerHTML = "";
-    for (let i = 0; i < items.length; i++) {          
+    document.getElementById("titre-tenues").innerHTML = "Mes tenues (" + items.length + ")";
+    for (let i = 0; i < items.length; i++) {       
     listeTenues.innerHTML = listeTenues.innerHTML + "<li><strong>" + items[i].nom + "</strong> — " + items[i].occasion + " — " + items[i].saison.join("/") + " — " + items[i].registre + " — " + items[i].eclat + "<br>" + composerTenue(items[i]) + " <button class='btn-modifier-tenue' data-id='" + items[i].id + "'>modifier</button> <button class='btn-supprimer-tenue' data-id='" + items[i].id + "'>x</button></li>";
     }
 
@@ -451,6 +444,10 @@ function sortirDeModification() {
     champMarque.value = "";
     champCategorie.value = "";
     remplirSousCategories("");
+
+    champCouleur.value = "";
+    teinteChoisie = "";
+    document.getElementById("zone-nuances").innerHTML = "";
 }
 
 btnAnnuler.addEventListener("click", sortirDeModification);
@@ -487,6 +484,7 @@ function activerModificationTenue() {
     let boutons = document.querySelectorAll(".btn-modifier-tenue");
     for (let i = 0; i < boutons.length; i++) {
         boutons[i].addEventListener("click", function() {
+            positionAvantModif = window.scrollY;
             let id = Number(this.getAttribute("data-id"));
             let trouve = tenues.filter(function(t) {
                 return t.id === id;
@@ -510,11 +508,13 @@ function activerModificationTenue() {
             idTenueEnModification = id;
             btnCreerTenue.innerHTML = "Enregistrer";
             btnAnnulerTenue.style.display = "inline-block";
+            champTenueNom.scrollIntoView({ behavior: "smooth", block: "center" });
         });
     }
 }
 
 function sortirDeModificationTenue() {
+    let revenir = idTenueEnModification !== null;
     idTenueEnModification = null;
     btnCreerTenue.innerHTML = "Créer";
     btnAnnulerTenue.style.display = "none";
@@ -529,6 +529,9 @@ function sortirDeModificationTenue() {
     let cases = document.querySelectorAll(".case-vetement");
     for (let j = 0; j < cases.length; j++) {
         cases[j].checked = false;
+    }
+    if (revenir) {
+    window.scrollTo({ top: positionAvantModif, behavior: "smooth" });
     }
 }
 
@@ -670,6 +673,7 @@ async function chargerVetements() {
             categorie: v.categorie,
             sousCategorie: v.sous_categorie,
             couleur: v.couleur || [],
+            teinte: v.teinte,
             nuance: v.nuance,
             matiere: v.matiere,
             marque: v.marque
@@ -701,6 +705,7 @@ async function ajouterVetement(v) {
         categorie: v.categorie || null,
         sous_categorie: v.sousCategorie || null,
         couleur: v.couleur || [],
+        teinte: v.teinte || null,
         nuance: v.nuance || null,
         matiere: v.matiere || null,
         marque: v.marque || null
@@ -718,6 +723,7 @@ async function modifierVetement(id, v) {
         categorie: v.categorie || null,
         sous_categorie: v.sousCategorie || null,
         couleur: v.couleur || [],
+        teinte: v.teinte || null,
         nuance: v.nuance || null,
         matiere: v.matiere || null,
         marque: v.marque || null
@@ -1002,6 +1008,70 @@ function marqueUniformisee(texte) {
     return parCle[cle] ? parCle[cle] : propre;
 }
 
+let exceptionsFamille = {
+    // "nom-de-couleur": "Famille",
+};
+
+function familleDe(c) {
+    if (exceptionsFamille[c.nom]) {
+        return exceptionsFamille[c.nom];
+    }
+
+    let p = c.hsl.replace("hsl(", "").replace(")", "").split(",");
+    let h = Number(p[0]);
+    let s = Number(p[1].replace("%", ""));
+    let l = Number(p[2].replace("%", ""));
+    let metaux = ["bronze", "cuivre", "or", "argent", "etain", "laiton", "acier", "nickel", "platine", "patine", "plomb", "zinc", "fonte", "vermeil", "chrome", "rouille-metal"];
+
+    if (metaux.indexOf(c.nom) !== -1) { return "Métallique"; }
+    if (l <= 18) { return "Noir"; }
+    if (s <= 12) { return l >= 85 ? "Blanc" : "Gris"; }
+    if (l >= 86 && s <= 30) { return "Blanc"; }
+    if (h >= 20 && h <= 50 && l >= 62) { return "Beige"; }
+    if (h >= 45 && h <= 110 && s <= 30 && l < 45) { return "Brun"; }
+    if (h >= 10 && h <= 45 && l < 50) { return "Brun"; }
+    if (h < 15 || h >= 345) { return l >= 70 ? "Rose" : "Rouge"; }
+    if (h < 45) { return "Orange"; }
+    if (h < 65) { return "Jaune"; }
+    if (h < 170) { return "Vert"; }
+    if (h < 250) { return "Bleu"; }
+    if (h < 320) { return "Violet"; }
+    return "Rose";
+}
+
+let teinteChoisie = "";
+
+function afficherNuances(famille) {
+    let zone = document.getElementById("zone-nuances");
+    let dedans = nuancier.filter(function(c) {
+        return familleDe(c) === famille;
+    });
+
+    let texte = "";
+    for (let i = 0; i < dedans.length; i++) {
+        let classe = dedans[i].nom === teinteChoisie ? "nuance choisie" : "nuance";
+        texte = texte + "<button type='button' class='" + classe + "' data-nom='" + dedans[i].nom +
+            "' title='" + dedans[i].nom + "' style='background:" + dedans[i].hsl + "'></button>";
+    }
+    if (teinteChoisie) {
+        texte = texte + "<span id='nom-nuance'>" + teinteChoisie + "</span>";
+    }
+    zone.innerHTML = texte;
+
+    let boutons = zone.querySelectorAll(".nuance");
+    for (let i = 0; i < boutons.length; i++) {
+        boutons[i].addEventListener("click", function() {
+            teinteChoisie = this.dataset.nom;
+            afficherNuances(famille);
+        });
+    }
+}
+
+champCouleur.addEventListener("input", function() {
+    teinteChoisie = "";
+    afficherNuances(champCouleur.value);
+});
+
 let nuancier = [
     { nom: "vert-de-gris", hsl: "hsl(150, 18%, 42%)" },
     { nom: "tabac", hsl: "hsl(30, 35%, 32%)" },
@@ -1203,5 +1273,6 @@ let nuancier = [
     { nom: "taupe", hsl: "hsl(30, 12%, 48%)" },
     { nom: "bitter", hsl: "hsl(18, 62%, 48%)" }
 ];
+
 
 lancer();

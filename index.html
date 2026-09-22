@@ -8,6 +8,8 @@
 <body>
 
     <div id="fond"></div>
+    <div id="fond-b"></div>
+    <div id="voile"></div>
 
     <div id="ecran-connexion">
         <div id="bloc-connexion">
@@ -148,7 +150,10 @@
 
                 <div id="zone-frequence"></div>
 
+            <details id="bloc-tenues" class="bloc-categorie">
+                <summary id="titre-tenues">Mes tenues</summary>
                 <ul id="liste-tenues"></ul>
+            </details>
 
             </section>
 
@@ -168,24 +173,16 @@
                 <input id="champ-sous-categorie" type="text" list="liste-sous-categories" placeholder="Sous-catégorie">
                 <datalist id="liste-sous-categories"></datalist>
 
-                <select id="champ-couleur" multiple size="6">
-                    <option value="Noir">Noir</option>
-                    <option value="Blanc">Blanc</option>
-                    <option value="Gris">Gris</option>
-                    <option value="Beige">Beige</option>
-                    <option value="Brun">Brun</option>
-                    <option value="Bleu">Bleu</option>
-                    <option value="Vert">Vert</option>
-                    <option value="Rouge">Rouge</option>
-                    <option value="Rose">Rose</option>
-                    <option value="Violet">Violet</option>
-                    <option value="Jaune">Jaune</option>
-                    <option value="Orange">Orange</option>
-                    <option value="Métallique">Métallique</option>
-                </select>
+                <input id="champ-couleur" type="text" list="liste-familles" placeholder="Famille de couleur">
+                    <datalist id="liste-familles">
+                        <option value="Noir"><option value="Blanc"><option value="Gris"><option value="Beige"><option value="Brun">
+                        <option value="Rouge"><option value="Rose"><option value="Orange"><option value="Jaune">
+                        <option value="Vert"><option value="Bleu"><option value="Violet"><option value="Métallique">
+                    </datalist>
+                    <div id="zone-nuances"></div>
                 <input id="champ-nuance" type="text" placeholder="Nuance (pistache, terracotta...)">
                 <input id="champ-matiere" type="text" list="liste-matieres" placeholder="Matière">
-                
+
                     <datalist id="liste-matieres">
                         <option value="Coton"><option value="Lin"><option value="Chanvre"><option value="Ramie"><option value="Jute">
                         <option value="Laine"><option value="Mérinos"><option value="Cachemire"><option value="Mohair"><option value="Alpaga"><option value="Angora"><option value="Soie">
