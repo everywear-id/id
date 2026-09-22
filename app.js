@@ -122,6 +122,7 @@ let btnExporter = document.getElementById("btn-exporter");
 
 champCategorie.addEventListener("change", function() {
     remplirSousCategories(champCategorie.value);
+    dessinerApercu();
 });
 
 function afficher(items) {
@@ -202,6 +203,7 @@ function activerModification() {
             idEnModification = id;
             btnAjouter.innerHTML = "Enregistrer";
             btnAnnuler.style.display = "inline-block";
+            dessinerApercu();
         });
     }
 }
@@ -448,6 +450,7 @@ function sortirDeModification() {
     champCouleur.value = "";
     teinteChoisie = "";
     document.getElementById("zone-nuances").innerHTML = "";
+    dessinerApercu();
 }
 
 btnAnnuler.addEventListener("click", sortirDeModification);
@@ -1060,9 +1063,10 @@ function afficherNuances(famille) {
 
     let boutons = zone.querySelectorAll(".nuance");
     for (let i = 0; i < boutons.length; i++) {
-        boutons[i].addEventListener("click", function() {
+            boutons[i].addEventListener("click", function() {
             teinteChoisie = this.dataset.nom;
             afficherNuances(famille);
+            dessinerApercu();
         });
     }
 }
@@ -1070,17 +1074,8 @@ function afficherNuances(famille) {
 champCouleur.addEventListener("input", function() {
     teinteChoisie = "";
     afficherNuances(champCouleur.value);
+    dessinerApercu();
 });
-
-let silhouetteMannequin = "M88 58 L112 58 L112 72 L140 80 L165 150 L150 156 L135 118 L135 200 L140 360 L106 360 L100 250 L94 360 L60 360 L65 200 L65 118 L50 156 L35 150 L60 80 L88 72 Z";
-
-let formesPieces = {
-    "Haut": "M60 80 L140 80 L165 150 L147 157 L135 122 L135 200 L65 200 L65 122 L53 157 L35 150 Z",
-    "Bas": "M65 198 L135 198 L140 360 L108 360 L100 252 L92 360 L60 360 Z",
-    "Pièce entière": "M62 80 L138 80 L140 200 L158 330 L42 330 L60 200 Z",
-    "Chaussure": "M58 360 L94 360 L98 380 L50 380 Z M106 360 L142 360 L150 380 L102 380 Z",
-    "Accessoire": "M80 70 Q100 92 120 70 L123 83 Q100 106 77 83 Z"
-};
 
 function couleurApercu() {
     if (teinteChoisie) {
@@ -1094,14 +1089,73 @@ function couleurApercu() {
     return "rgba(0, 0, 0, 0.06)";
 }
 
-function dessinerApercu() {
-    let svg = "<svg viewBox='0 0 200 400'>" +
-        "<circle cx='100' cy='38' r='18' class='mannequin'/>" +
-        "<path d='" + silhouetteMannequin + "' class='mannequin'/>";
+let zonesMannequin = {
+    tete: "M80 50 A20 20 0 1 0 120 50 A20 20 0 1 0 80 50 Z",
+    cou: "M93 71 L107 71 L107 80 L93 80 Z",
+    bras: "M92 94 L60 160 L67 164 L97 100 Z M108 94 L140 160 L133 164 L103 100 Z",
+    buste: "M100 82 L143 190 L57 190 Z",
+    taille: "M57 191 L143 191 L146 196 L54 196 Z",
+    bassin: "M54 197 L146 197 L156 222 L44 222 Z",
+    cuisses: "M80 224 L92 224 L92 280 L80 280 Z M108 224 L120 224 L120 280 L108 280 Z",
+    jambes: "M80 283 L92 283 L92 340 L80 340 Z M108 283 L120 283 L120 340 L108 340 Z",
+    pieds: "M74 343 L94 343 L94 352 L74 352 Z M106 343 L126 343 L126 352 L106 352 Z"
+};
 
-    let forme = formesPieces[champCategorie.value];
-    if (forme) {
-        svg = svg + "<path d='" + forme + "' fill='" + couleurApercu() + "' class='piece-apercu'/>";
+let tenueComplete = ["buste", "bras", "bassin", "cuisses", "jambes"];
+
+let zonesParSousCategorie = {
+    "T-shirt": ["buste"], "Polo": ["buste"], "Débardeur": ["buste"], "Top": ["buste"],
+    "Bustier": ["buste"], "Gilet": ["buste"], "Maillot de sport": ["buste"],
+    "Chemise": ["buste", "bras"], "Chemisier": ["buste", "bras"], "Blouse": ["buste", "bras"],
+    "Pull": ["buste", "bras"], "Cardigan": ["buste", "bras"], "Sweat": ["buste", "bras"],
+    "Veste": ["buste", "bras"], "Blazer": ["buste", "bras"], "Doudoune": ["buste", "bras"], "K-way": ["buste", "bras"],
+    "Body": ["buste", "bassin"],
+    "Parka": ["buste", "bras", "bassin"],
+    "Manteau": ["buste", "bras", "bassin", "cuisses"], "Trench": ["buste", "bras", "bassin", "cuisses"],
+    "Pantalon": ["bassin", "cuisses", "jambes"], "Jean": ["bassin", "cuisses", "jambes"],
+    "Chino": ["bassin", "cuisses", "jambes"], "Jogging": ["bassin", "cuisses", "jambes"],
+    "Legging": ["bassin", "cuisses", "jambes"], "Collant": ["bassin", "cuisses", "jambes"],
+    "Short": ["bassin", "cuisses"], "Bermuda": ["bassin", "cuisses"], "Cycliste": ["bassin", "cuisses"],
+    "Jupe": ["bassin", "cuisses"], "Jupe-culotte": ["bassin", "cuisses"],
+    "Bas": ["cuisses", "jambes"],
+    "Robe": ["buste", "bassin", "cuisses"],
+    "Salopette": ["buste", "bassin", "cuisses", "jambes"],
+    "Combinaison": tenueComplete, "Costume": tenueComplete, "Tailleur": tenueComplete, "Ensemble": tenueComplete,
+    "Maillot de bain": ["bassin"],
+    "Botte": ["pieds", "jambes"], "Cuissarde": ["pieds", "jambes", "cuisses"],
+    "Ceinture": ["taille"],
+    "Cravate": ["cou"], "Nœud papillon": ["cou"], "Écharpe": ["cou"], "Foulard": ["cou"], "Châle": ["cou"], "Étole": ["cou"],
+    "Chapeau": ["tete"], "Casquette": ["tete"], "Bonnet": ["tete"], "Béret": ["tete"]
+};
+
+let zonesParCategorie = {
+    "Haut": ["buste", "bras"],
+    "Bas": ["bassin", "cuisses", "jambes"],
+    "Pièce entière": ["buste", "bassin", "cuisses"],
+    "Chaussure": ["pieds"],
+    "Accessoire": []
+};
+
+function zonesDe(categorie, sousCategorie) {
+    if (zonesParSousCategorie[sousCategorie]) {
+        return zonesParSousCategorie[sousCategorie];
+    }
+    return zonesParCategorie[categorie] || [];
+}
+
+function dessinerApercu() {
+    let couvertes = zonesDe(champCategorie.value, champSousCategorie.value);
+    let couleur = couleurApercu();
+    let svg = "<svg viewBox='0 0 200 380'>";
+
+    let noms = Object.keys(zonesMannequin);
+    for (let i = 0; i < noms.length; i++) {
+        let zone = noms[i];
+        if (couvertes.indexOf(zone) !== -1) {
+            svg = svg + "<path d='" + zonesMannequin[zone] + "' fill='" + couleur + "' class='piece-apercu'/>";
+        } else {
+            svg = svg + "<path d='" + zonesMannequin[zone] + "' class='mannequin'/>";
+        }
     }
     svg = svg + "</svg>";
 
@@ -1111,6 +1165,8 @@ function dessinerApercu() {
 
     document.getElementById("apercu").innerHTML = svg;
 }
+
+champSousCategorie.addEventListener("input", dessinerApercu);
 
 champNom.addEventListener("input", dessinerApercu);
 
