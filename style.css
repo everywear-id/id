@@ -552,3 +552,57 @@ a, button, input, select, textarea, summary, label {
     opacity: 0.7;
     margin-left: 6px;
 }
+
+#apercu {
+    position: fixed;
+    right: 60px;
+    top: 120px;
+    width: 200px;
+    text-align: center;
+    pointer-events: none;
+}
+
+#apercu svg {
+    width: 200px;
+    height: 400px;
+}
+
+#apercu .mannequin {
+    fill: none;
+    stroke: rgba(0, 0, 0, 0.22);
+    stroke-width: 1.5;
+}
+
+#apercu .piece-apercu {
+    stroke: rgba(0, 0, 0, 0.35);
+    stroke-width: 1;
+}
+
+.apercu-nom {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-top: 8px;
+}
+
+#liste-tenues li {
+    position: relative;
+    padding-right: 120px;
+}
+
+.pastilles-tenue {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 4px;
+}
+
+.pastille-tenue {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+}

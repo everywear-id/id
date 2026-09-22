@@ -341,7 +341,7 @@ function afficherTenues(items) {
     listeTenues.innerHTML = "";
     document.getElementById("titre-tenues").innerHTML = "Mes tenues (" + items.length + ")";
     for (let i = 0; i < items.length; i++) {       
-    listeTenues.innerHTML = listeTenues.innerHTML + "<li><strong>" + items[i].nom + "</strong> — " + items[i].occasion + " — " + items[i].saison.join("/") + " — " + items[i].registre + " — " + items[i].eclat + "<br>" + composerTenue(items[i]) + " <button class='btn-modifier-tenue' data-id='" + items[i].id + "'>modifier</button> <button class='btn-supprimer-tenue' data-id='" + items[i].id + "'>x</button></li>";
+    listeTenues.innerHTML = listeTenues.innerHTML + "<li>" + pastillesTenue(items[i]) + "<strong>" + items[i].nom + "</strong> — " + items[i].occasion + " — " + items[i].saison.join("/") + " — " + items[i].registre + " — " + items[i].eclat + "<br>" + composerTenue(items[i]) + " <button class='btn-modifier-tenue' data-id='" + items[i].id + "'>modifier</button> <button class='btn-supprimer-tenue' data-id='" + items[i].id + "'>x</button></li>";
     }
 
     activerSuppressionTenues(tenues);
@@ -1072,6 +1072,72 @@ champCouleur.addEventListener("input", function() {
     afficherNuances(champCouleur.value);
 });
 
+let silhouetteMannequin = "M88 58 L112 58 L112 72 L140 80 L165 150 L150 156 L135 118 L135 200 L140 360 L106 360 L100 250 L94 360 L60 360 L65 200 L65 118 L50 156 L35 150 L60 80 L88 72 Z";
+
+let formesPieces = {
+    "Haut": "M60 80 L140 80 L165 150 L147 157 L135 122 L135 200 L65 200 L65 122 L53 157 L35 150 Z",
+    "Bas": "M65 198 L135 198 L140 360 L108 360 L100 252 L92 360 L60 360 Z",
+    "Pièce entière": "M62 80 L138 80 L140 200 L158 330 L42 330 L60 200 Z",
+    "Chaussure": "M58 360 L94 360 L98 380 L50 380 Z M106 360 L142 360 L150 380 L102 380 Z",
+    "Accessoire": "M80 70 Q100 92 120 70 L123 83 Q100 106 77 83 Z"
+};
+
+function couleurApercu() {
+    if (teinteChoisie) {
+        let c = nuancier.find(function(x) { return x.nom === teinteChoisie; });
+        if (c) { return c.hsl; }
+    }
+    if (champCouleur.value) {
+        let dedans = nuancier.filter(function(x) { return familleDe(x) === champCouleur.value; });
+        if (dedans.length > 0) { return dedans[Math.floor(dedans.length / 2)].hsl; }
+    }
+    return "rgba(0, 0, 0, 0.06)";
+}
+
+function dessinerApercu() {
+    let svg = "<svg viewBox='0 0 200 400'>" +
+        "<circle cx='100' cy='38' r='18' class='mannequin'/>" +
+        "<path d='" + silhouetteMannequin + "' class='mannequin'/>";
+
+    let forme = formesPieces[champCategorie.value];
+    if (forme) {
+        svg = svg + "<path d='" + forme + "' fill='" + couleurApercu() + "' class='piece-apercu'/>";
+    }
+    svg = svg + "</svg>";
+
+    if (champNom.value) {
+        svg = svg + "<p class='apercu-nom'>" + champNom.value + "</p>";
+    }
+
+    document.getElementById("apercu").innerHTML = svg;
+}
+
+champNom.addEventListener("input", dessinerApercu);
+
+function couleurDeVetement(v) {
+    if (v.teinte) {
+        let c = nuancier.find(function(x) { return x.nom === v.teinte; });
+        if (c) { return c.hsl; }
+    }
+    if (v.couleur && v.couleur[0]) {
+        let dedans = nuancier.filter(function(x) { return familleDe(x) === v.couleur[0]; });
+        if (dedans.length > 0) { return dedans[Math.floor(dedans.length / 2)].hsl; }
+    }
+    return null;
+}
+
+function pastillesTenue(tenue) {
+    let texte = "<span class='pastilles-tenue'>";
+    for (let i = 0; i < tenue.vetementIds.length; i++) {
+        let v = vetements.find(function(x) { return x.id === tenue.vetementIds[i]; });
+        if (!v) { continue; }
+        let couleur = couleurDeVetement(v);
+        if (!couleur) { continue; }
+        texte = texte + "<span class='pastille-tenue' title=\"" + v.nom + "\" style='background:" + couleur + "'></span>";
+    }
+    return texte + "</span>";
+}
+
 let nuancier = [
     { nom: "vert-de-gris", hsl: "hsl(150, 18%, 42%)" },
     { nom: "tabac", hsl: "hsl(30, 35%, 32%)" },
@@ -1274,5 +1340,5 @@ let nuancier = [
     { nom: "bitter", hsl: "hsl(18, 62%, 48%)" }
 ];
 
-
+dessinerApercu();
 lancer();
