@@ -135,6 +135,10 @@ function afficher(items) {
 }
 
 btnAjouter.addEventListener("click", async function() {
+    if (blocLigne.style.display === "block" && champLigne.value.trim() !== "") {
+        appliquerLigne();
+    }
+
     if (champNom.value === "") {
         alert("Donnez un nom au vêtement.");
         return;
@@ -1540,27 +1544,137 @@ let blocFormulaire = document.getElementById("bloc-formulaire");
 let btnModeAtelier = document.getElementById("mode-atelier");
 let btnModeFormulaire = document.getElementById("mode-formulaire");
 
-btnModeAtelier.addEventListener("click", function() {
-    blocAtelier.style.display = "block";
-    blocFormulaire.style.display = "none";
-    btnModeAtelier.classList.add("actif");
-    btnModeFormulaire.classList.remove("actif");
-    rafraichirEtiquettes();
-    dessinerApercu();
-});
-
-btnModeFormulaire.addEventListener("click", function() {
-    blocAtelier.style.display = "none";
-    blocFormulaire.style.display = "block";
-    btnModeFormulaire.classList.add("actif");
-    btnModeAtelier.classList.remove("actif");
-});
+btnModeAtelier.addEventListener("click", function() { activerMode("atelier"); });
+btnModeFormulaire.addEventListener("click", function() { activerMode("formulaire"); });
 
 let champsSuivis = [champNom, champSousCategorie, champCouleur, champMatiere, champMarque, champNuance];
 for (let i = 0; i < champsSuivis.length; i++) {
     champsSuivis[i].addEventListener("input", rafraichirEtiquettes);
 }
 champCategorie.addEventListener("change", rafraichirEtiquettes);
+
+let champLigne = document.getElementById("champ-ligne");
+let lectureLigne = document.getElementById("lecture-ligne");
+
+function trouverSousCategorie(mot) {
+    let cles = Object.keys(sousCategories);
+    for (let i = 0; i < cles.length; i++) {
+        let liste = sousCategories[cles[i]];
+        for (let j = 0; j < liste.length; j++) {
+            if (cleMarque(liste[j]) === mot) {
+                return { categorie: cles[i], sousCategorie: liste[j] };
+            }
+        }
+    }
+    return null;
+}
+
+function analyserLigne(texte) {
+    let mots = texte.split(" ");
+    let resultat = { categorie: "", sousCategorie: "", famille: "", teinte: "", matiere: "", marque: "", reste: [] };
+    let marques = Object.values(marquesConnues());
+
+    for (let i = 0; i < mots.length; i++) {
+        let brut = mots[i];
+        if (brut === "") { continue; }
+        let mot = cleMarque(brut);
+        let pris = false;
+
+        let sc = trouverSousCategorie(mot);
+        if (sc && !resultat.sousCategorie) {
+            resultat.categorie = sc.categorie;
+            resultat.sousCategorie = sc.sousCategorie;
+            pris = true;
+        }
+
+        if (!pris && !resultat.teinte) {
+            let c = nuancier.filter(function(x) { return cleMarque(x.nom) === mot; });
+            if (c.length > 0) {
+                resultat.teinte = c[0].nom;
+                resultat.famille = familleDe(c[0]);
+                pris = true;
+            }
+        }
+
+        if (!pris && !resultat.famille) {
+            let f = famillesCouleur.filter(function(x) { return cleMarque(x) === mot; });
+            if (f.length > 0) { resultat.famille = f[0]; pris = true; }
+        }
+
+        if (!pris && !resultat.matiere) {
+            let m = listeMatieres.filter(function(x) { return cleMarque(x) === mot; });
+            if (m.length > 0) { resultat.matiere = m[0]; pris = true; }
+        }
+
+        if (!pris && !resultat.marque) {
+            let q = marques.filter(function(x) { return cleMarque(x) === mot; });
+            if (q.length > 0) { resultat.marque = q[0]; pris = true; }
+        }
+
+        if (!pris) { resultat.reste.push(brut); }
+    }
+
+    return resultat;
+}
+
+function pastille(role, valeur) {
+    return "<span class='lu'><em>" + role + "</em>" + valeur + "</span>";
+}
+
+function appliquerLigne() {
+    let lu = analyserLigne(champLigne.value);
+
+    champCategorie.value = lu.categorie;
+    remplirSousCategories(lu.categorie);
+    champSousCategorie.value = lu.sousCategorie;
+    champCouleur.value = lu.famille;
+    teinteChoisie = lu.teinte;
+    champMatiere.value = lu.matiere;
+    champMarque.value = lu.marque;
+    champNom.value = lu.reste.join(" ");
+
+    let texte = "";
+    if (lu.sousCategorie) { texte = texte + pastille("type", lu.sousCategorie); }
+    if (lu.teinte) { texte = texte + pastille("teinte", lu.teinte); }
+    else if (lu.famille) { texte = texte + pastille("couleur", lu.famille); }
+    if (lu.matiere) { texte = texte + pastille("matière", lu.matiere); }
+    if (lu.marque) { texte = texte + pastille("marque", lu.marque); }
+    if (lu.reste.length > 0) { texte = texte + pastille("nom", lu.reste.join(" ")); }
+    lectureLigne.innerHTML = texte;
+
+    rafraichirEtiquettes();
+    dessinerApercu();
+}
+
+function validerLigne() {
+    appliquerLigne();
+    btnAjouter.click();
+    champLigne.value = "";
+    lectureLigne.innerHTML = "";
+    champLigne.focus();
+}
+
+champLigne.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        validerLigne();
+    }
+});
+
+let blocLigne = document.getElementById("bloc-ligne");
+let btnModeLigne = document.getElementById("mode-ligne");
+
+function activerMode(mode) {
+    blocAtelier.style.display = mode === "atelier" ? "block" : "none";
+    blocFormulaire.style.display = mode === "formulaire" ? "block" : "none";
+    blocLigne.style.display = mode === "ligne" ? "block" : "none";
+    btnModeAtelier.classList.toggle("actif", mode === "atelier");
+    btnModeFormulaire.classList.toggle("actif", mode === "formulaire");
+    btnModeLigne.classList.toggle("actif", mode === "ligne");
+    if (mode === "ligne") { champLigne.focus(); }
+    if (mode === "atelier") { rafraichirEtiquettes(); dessinerApercu(); }
+}
+
+btnModeLigne.addEventListener("click", function() { activerMode("ligne"); });
 
 rafraichirEtiquettes();
 dessinerApercu();
