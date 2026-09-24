@@ -160,7 +160,54 @@
             <section id="section-inventaire">
 
                 <h4>Ajouter un vêtement</h4>
-                <div id="apercu"></div>
+                
+                <div id="bascule-mode">
+                    <button id="mode-formulaire" class="onglet-mode">Formulaire</button>
+                    <button id="mode-atelier" class="onglet-mode actif">Atelier</button>
+                </div>
+
+                <div id="bloc-atelier">
+
+                    <div id="atelier">
+                        <div class="colonne-etiquettes">
+                            <div class="etiquette" data-champ="categorie">
+                                <span class="et-titre">Catégorie</span>
+                                <span class="et-valeur" id="val-categorie">—</span>
+                            </div>
+                            <div class="etiquette" data-champ="sousCategorie">
+                                <span class="et-titre">Type</span>
+                                <span class="et-valeur" id="val-sousCategorie">—</span>
+                            </div>
+                            <div class="etiquette" data-champ="couleur">
+                                <span class="et-titre">Couleur</span>
+                                <span class="et-valeur" id="val-couleur">—</span>
+                            </div>
+                        </div>
+
+                        <div id="apercu"></div>
+
+                        <div class="colonne-etiquettes">
+                            <div class="etiquette" data-champ="matiere">
+                                <span class="et-titre">Matière</span>
+                                <span class="et-valeur" id="val-matiere">—</span>
+                            </div>
+                            <div class="etiquette" data-champ="marque">
+                                <span class="et-titre">Marque</span>
+                                <span class="et-valeur" id="val-marque">—</span>
+                            </div>
+                            <div class="etiquette" data-champ="nom">
+                                <span class="et-titre">Nom</span>
+                                <span class="et-valeur" id="val-nom">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="zone-saisie"></div>
+
+                </div>
+
+                <div id="bloc-formulaire">
+
                 <input id="champ-nom" type="text" placeholder="Nom du vêtement">
                 <select id="champ-categorie">
                     <option value="">Catégorie...</option>
@@ -198,6 +245,7 @@
 
                 <input id="champ-marque" type="text" list="liste-marques" placeholder="Marque">
                 <datalist id="liste-marques"></datalist>                
+                </div>
                 
                 <button id="btn-ajouter">Ajouter</button>
                 <button id="btn-annuler" style="display:none">Annuler</button>

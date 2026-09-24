@@ -554,12 +554,9 @@ a, button, input, select, textarea, summary, label {
 }
 
 #apercu {
-    position: fixed;
-    right: 60px;
-    top: 120px;
     width: 200px;
     text-align: center;
-    pointer-events: none;
+    flex-shrink: 0;
 }
 
 #apercu svg {
@@ -605,4 +602,100 @@ a, button, input, select, textarea, summary, label {
     height: 16px;
     border-radius: 2px;
     border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+#bascule-mode {
+    margin-bottom: 20px;
+}
+
+.onglet-mode {
+    background: none;
+    color: #222;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 5px 14px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    opacity: 0.5;
+}
+
+.onglet-mode.actif {
+    opacity: 1;
+    background: #222;
+    color: white;
+    border-color: #222;
+}
+
+#bloc-formulaire {
+    display: none;
+}
+
+#atelier {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin: 20px 0;
+}
+
+.colonne-etiquettes {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 150px;
+}
+
+.etiquette {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    transition: border-color 0.3s;
+}
+
+.etiquette:hover,
+.etiquette.active {
+    border-bottom-color: #222;
+}
+
+.et-titre {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.45;
+}
+
+.et-valeur {
+    display: block;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    margin-top: 3px;
+    min-height: 18px;
+}
+
+#zone-saisie {
+    min-height: 40px;
+    max-width: 560px;
+    margin: 0 auto 16px;
+    text-align: center;
+}
+
+#zone-saisie input {
+    max-width: 280px;
+    margin: 8px auto;
+}
+
+.choix {
+    display: inline-block;
+    margin: 0 5px 5px 0;
+    padding: 6px 12px;
+    font-size: 13px;
+    background: none;
+    color: #222;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.choix.retenu {
+    background: #222;
+    color: white;
+    border-color: #222;
 }

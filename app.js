@@ -204,6 +204,7 @@ function activerModification() {
             btnAjouter.innerHTML = "Enregistrer";
             btnAnnuler.style.display = "inline-block";
             dessinerApercu();
+            rafraichirEtiquettes();
         });
     }
 }
@@ -451,6 +452,8 @@ function sortirDeModification() {
     teinteChoisie = "";
     document.getElementById("zone-nuances").innerHTML = "";
     dessinerApercu();
+    rafraichirEtiquettes();
+    document.getElementById("zone-saisie").innerHTML = "";
 }
 
 btnAnnuler.addEventListener("click", sortirDeModification);
@@ -1067,6 +1070,7 @@ function afficherNuances(famille) {
             teinteChoisie = this.dataset.nom;
             afficherNuances(famille);
             dessinerApercu();
+            rafraichirEtiquettes();
         });
     }
 }
@@ -1396,5 +1400,168 @@ let nuancier = [
     { nom: "bitter", hsl: "hsl(18, 62%, 48%)" }
 ];
 
+let listeMatieres = ["Coton", "Lin", "Chanvre", "Ramie", "Jute", "Laine", "Mérinos", "Cachemire", "Mohair",
+    "Alpaga", "Angora", "Soie", "Cuir", "Daim", "Nubuck", "Simili cuir", "Cuir vegan", "Viscose", "Modal",
+    "Lyocell", "Cupro", "Bambou", "Polyester", "Nylon", "Polyamide", "Acrylique", "Élasthanne", "Polyuréthane",
+    "Denim", "Velours", "Velours côtelé", "Tweed", "Flanelle", "Popeline", "Oxford", "Gabardine", "Twill",
+    "Jersey", "Maille", "Crêpe", "Satin", "Mousseline", "Dentelle", "Feutre", "Molleton", "Éponge", "Toile",
+    "Canvas", "Seersucker", "Chambray", "Piqué", "Gore-Tex", "Softshell", "Polaire", "Néoprène"];
+
+let famillesCouleur = ["Noir", "Blanc", "Gris", "Beige", "Brun", "Rouge", "Rose", "Orange", "Jaune", "Vert", "Bleu", "Violet", "Métallique"];
+
+function boutonsChoix(liste, valeurActuelle) {
+    let texte = "";
+    for (let i = 0; i < liste.length; i++) {
+        let classe = liste[i] === valeurActuelle ? "choix retenu" : "choix";
+        texte = texte + "<button type='button' class='" + classe + "' data-v=\"" + liste[i] + "\">" + liste[i] + "</button>";
+    }
+    return texte;
+}
+
+function ouvrirChamp(champ) {
+    let zone = document.getElementById("zone-saisie");
+
+    let etiquettes = document.querySelectorAll(".etiquette");
+    for (let i = 0; i < etiquettes.length; i++) {
+        etiquettes[i].classList.remove("active");
+        if (etiquettes[i].dataset.champ === champ) {
+            etiquettes[i].classList.add("active");
+        }
+    }
+
+    if (champ === "categorie") {
+        zone.innerHTML = boutonsChoix(Object.keys(sousCategories), champCategorie.value);
+    }
+    if (champ === "sousCategorie") {
+        zone.innerHTML = boutonsChoix(sousCategories[champCategorie.value] || [], champSousCategorie.value) +
+            "<input id='saisie-libre' type='text' placeholder='ou le vôtre' value=\"" + champSousCategorie.value + "\">";
+    }
+    if (champ === "couleur") {
+        zone.innerHTML = boutonsChoix(famillesCouleur, champCouleur.value) + "<div id='nuances-atelier'></div>";
+        if (champCouleur.value) { afficherNuancesDans("nuances-atelier", champCouleur.value); }
+    }
+    if (champ === "matiere") {
+        zone.innerHTML = boutonsChoix(listeMatieres, champMatiere.value) +
+            "<input id='saisie-libre' type='text' placeholder='ou la vôtre' value=\"" + champMatiere.value + "\">";
+    }
+    if (champ === "marque") {
+        zone.innerHTML = boutonsChoix(Object.values(marquesConnues()).sort(), champMarque.value) +
+            "<input id='saisie-libre' type='text' placeholder='ou la vôtre' value=\"" + champMarque.value + "\">";
+    }
+    if (champ === "nom") {
+        zone.innerHTML = "<input id='saisie-libre' type='text' placeholder='Nom du vêtement' value=\"" + champNom.value + "\">";
+    }
+
+    let choix = zone.querySelectorAll(".choix");
+    for (let i = 0; i < choix.length; i++) {
+        choix[i].addEventListener("click", function() {
+            appliquerChoix(champ, this.dataset.v, false);
+        });
+    }
+
+    let libre = document.getElementById("saisie-libre");
+    if (libre) {
+        libre.addEventListener("input", function() {
+            appliquerChoix(champ, libre.value, true);
+        });
+    }
+}
+
+function afficherNuancesDans(idZone, famille) {
+    let zone = document.getElementById(idZone);
+    if (!zone) { return; }
+    let dedans = nuancier.filter(function(c) { return familleDe(c) === famille; });
+
+    let texte = "";
+    for (let i = 0; i < dedans.length; i++) {
+        let classe = dedans[i].nom === teinteChoisie ? "nuance choisie" : "nuance";
+        texte = texte + "<button type='button' class='" + classe + "' data-nom='" + dedans[i].nom +
+            "' title='" + dedans[i].nom + "' style='background:" + dedans[i].hsl + "'></button>";
+    }
+    zone.innerHTML = texte;
+
+    let boutons = zone.querySelectorAll(".nuance");
+    for (let i = 0; i < boutons.length; i++) {
+        boutons[i].addEventListener("click", function() {
+            teinteChoisie = this.dataset.nom;
+            afficherNuancesDans(idZone, famille);
+            dessinerApercu();
+            rafraichirEtiquettes();
+        });
+    }
+}
+
+function appliquerChoix(champ, valeur, saisieLibre) {
+    if (champ === "categorie") {
+        champCategorie.value = valeur;
+        remplirSousCategories(valeur);
+    }
+    if (champ === "sousCategorie") { champSousCategorie.value = valeur; }
+    if (champ === "couleur") {
+        champCouleur.value = valeur;
+        teinteChoisie = "";
+        afficherNuances(valeur);
+        afficherNuancesDans("nuances-atelier", valeur);
+    }
+    if (champ === "matiere") { champMatiere.value = valeur; }
+    if (champ === "marque") { champMarque.value = valeur; }
+    if (champ === "nom") { champNom.value = valeur; }
+
+    rafraichirEtiquettes();
+    dessinerApercu();
+
+    if (saisieLibre) { return; }
+
+    if (champ === "categorie") { ouvrirChamp("sousCategorie"); return; }
+    if (champ === "sousCategorie") { ouvrirChamp("couleur"); return; }
+    if (champ === "matiere") { ouvrirChamp("marque"); return; }
+    if (champ === "marque") { ouvrirChamp("nom"); return; }
+    ouvrirChamp(champ);
+}
+
+function rafraichirEtiquettes() {
+    document.getElementById("val-categorie").innerHTML = champCategorie.value || "—";
+    document.getElementById("val-sousCategorie").innerHTML = champSousCategorie.value || "—";
+    document.getElementById("val-couleur").innerHTML = teinteChoisie || champCouleur.value || "—";
+    document.getElementById("val-matiere").innerHTML = champMatiere.value || "—";
+    document.getElementById("val-marque").innerHTML = champMarque.value || "—";
+    document.getElementById("val-nom").innerHTML = champNom.value || "—";
+}
+
+let toutesEtiquettes = document.querySelectorAll(".etiquette");
+for (let i = 0; i < toutesEtiquettes.length; i++) {
+    toutesEtiquettes[i].addEventListener("click", function() {
+        ouvrirChamp(this.dataset.champ);
+    });
+}
+
+let blocAtelier = document.getElementById("bloc-atelier");
+let blocFormulaire = document.getElementById("bloc-formulaire");
+let btnModeAtelier = document.getElementById("mode-atelier");
+let btnModeFormulaire = document.getElementById("mode-formulaire");
+
+btnModeAtelier.addEventListener("click", function() {
+    blocAtelier.style.display = "block";
+    blocFormulaire.style.display = "none";
+    btnModeAtelier.classList.add("actif");
+    btnModeFormulaire.classList.remove("actif");
+    rafraichirEtiquettes();
+    dessinerApercu();
+});
+
+btnModeFormulaire.addEventListener("click", function() {
+    blocAtelier.style.display = "none";
+    blocFormulaire.style.display = "block";
+    btnModeFormulaire.classList.add("actif");
+    btnModeAtelier.classList.remove("actif");
+});
+
+let champsSuivis = [champNom, champSousCategorie, champCouleur, champMatiere, champMarque, champNuance];
+for (let i = 0; i < champsSuivis.length; i++) {
+    champsSuivis[i].addEventListener("input", rafraichirEtiquettes);
+}
+champCategorie.addEventListener("change", rafraichirEtiquettes);
+
+rafraichirEtiquettes();
 dessinerApercu();
 lancer();
