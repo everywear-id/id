@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>I_D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz@6..96&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -101,35 +104,65 @@
                     <input id="recherche-piece" type="text" placeholder="Filtrer : marque, type, couleur...">
                     <div id="zone-tenue-vetements"></div>
 
-                    <select id="champ-occasion">
-                        <option value="">Occasion...</option>
-                        <option value="Quotidien">Quotidien</option>
-                        <option value="Travail">Travail</option>
-                        <option value="Date">Date</option>
-                        <option value="Soiree">Soirée</option>
-                        <option value="Sophistiqué">Sophistiqué</option>
-                        <option value="Sport">Sport</option>
-                    </select>
+                <div class="echelle" data-pour="champ-occasion">
+                    <span class="ech-titre">Occasion</span>
+                    <div class="ech-rail">
+                        <button type="button" class="ech-cran" data-v="Quotidien">Quotidien</button>
+                        <button type="button" class="ech-cran" data-v="Travail">Travail</button>
+                        <button type="button" class="ech-cran" data-v="Date">Date</button>
+                        <button type="button" class="ech-cran" data-v="Soiree">Soirée</button>
+                        <button type="button" class="ech-cran" data-v="Sophistiqué">Sophistiqué</button>
+                        <button type="button" class="ech-cran" data-v="Sport">Sport</button>
+                    </div>
+                </div>
+
+                <div class="echelle" data-pour="champ-registre">
+                    <span class="ech-titre">Registre</span>
+                    <div class="ech-rail">
+                        <button type="button" class="ech-cran" data-v="Décontracté">Décontracté</button>
+                        <button type="button" class="ech-cran" data-v="Intermédiaire">Intermédiaire</button>
+                        <button type="button" class="ech-cran" data-v="Habillé">Habillé</button>
+                    </div>
+                </div>
+
+                <div class="echelle" data-pour="champ-eclat">
+                    <span class="ech-titre">Éclat</span>
+                    <div class="ech-rail">
+                        <button type="button" class="ech-cran" data-v="Discret">Discret</button>
+                        <button type="button" class="ech-cran" data-v="Équilibré">Équilibré</button>
+                        <button type="button" class="ech-cran" data-v="Affirmé">Affirmé</button>
+                    </div>
+                </div>
+
+                <select id="champ-occasion" style="display:none">
+                    <option value="">Occasion...</option>
+                    <option value="Quotidien">Quotidien</option>
+                    <option value="Travail">Travail</option>
+                    <option value="Date">Date</option>
+                    <option value="Soiree">Soirée</option>
+                    <option value="Sophistiqué">Sophistiqué</option>
+                    <option value="Sport">Sport</option>
+                </select>
+
+                <select id="champ-registre" style="display:none">
+                    <option value="">Registre...</option>
+                    <option value="Décontracté">Décontracté</option>
+                    <option value="Intermédiaire">Intermédiaire</option>
+                    <option value="Habillé">Habillé</option>
+                </select>
+
+                <select id="champ-eclat" style="display:none">
+                    <option value="">Éclat...</option>
+                    <option value="Discret">Discret</option>
+                    <option value="Équilibré">Équilibré</option>
+                    <option value="Affirmé">Affirmé</option>
+                </select>
 
                     <select id="champ-saison" multiple size="4">
                         <option value="Printemps">Printemps</option>
                         <option value="Été">Été</option>
                         <option value="Automne">Automne</option>
                         <option value="Hiver">Hiver</option>
-                    </select>
-
-                    <select id="champ-registre">
-                        <option value="">Registre...</option>
-                        <option value="Décontracté">Décontracté</option>
-                        <option value="Intermédiaire">Intermédiaire</option>
-                        <option value="Habillé">Habillé</option>
-                    </select>
-
-                    <select id="champ-eclat">
-                        <option value="">Éclat...</option>
-                        <option value="Discret">Discret</option>
-                        <option value="Équilibré">Équilibré</option>
-                        <option value="Affirmé">Affirmé</option>
                     </select>
 
                     <button id="btn-creer-tenue">Créer</button>

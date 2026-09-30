@@ -545,6 +545,8 @@ function activerModificationTenue() {
     }
 }
 
+rafraichirEchelles(); 
+
 function sortirDeModificationTenue() {
     let revenir = idTenueEnModification !== null;
     idTenueEnModification = null;
@@ -566,6 +568,8 @@ function sortirDeModificationTenue() {
     window.scrollTo({ top: positionAvantModif, behavior: "smooth" });
     }
 }
+
+rafraichirEchelles(); 
 
 btnAnnulerTenue.addEventListener("click", sortirDeModificationTenue);
 
@@ -1861,6 +1865,38 @@ function afficherResultats(items) {
 }
 
 
+
 rafraichirEtiquettes();
 dessinerApercu();
 lancer();
+
+function brancherEchelles() {
+    let echelles = document.querySelectorAll(".echelle");
+
+    for (let i = 0; i < echelles.length; i++) {
+        let champ = document.getElementById(echelles[i].dataset.pour);
+        let crans = echelles[i].querySelectorAll(".ech-cran");
+
+        for (let j = 0; j < crans.length; j++) {
+            crans[j].addEventListener("click", function() {
+                let deja = this.classList.contains("retenu");
+                champ.value = deja ? "" : this.dataset.v;
+                rafraichirEchelles();
+            });
+        }
+    }
+}
+
+function rafraichirEchelles() {
+    let echelles = document.querySelectorAll(".echelle");
+    for (let i = 0; i < echelles.length; i++) {
+        let champ = document.getElementById(echelles[i].dataset.pour);
+        let crans = echelles[i].querySelectorAll(".ech-cran");
+        for (let j = 0; j < crans.length; j++) {
+            crans[j].classList.toggle("retenu", crans[j].dataset.v === champ.value);
+        }
+    }
+}
+
+brancherEchelles();
+rafraichirEchelles();

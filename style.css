@@ -4,6 +4,12 @@
     --encre-legere: #86837f;
     --trait: rgba(0, 0, 0, 0.13);
     --trait-fort: rgba(0, 0, 0, 0.28);
+    --voix: 'Bodoni Moda', Georgia, serif;
+    --outil: 'Jost', Helvetica, Arial, sans-serif;
+    --vif: hsl(350, 45%, 20%);
+    --vif-clair: hsl(350, 45%, 94%);
+    --surface: rgba(255, 255, 255, 0.72);
+    --surface-forte: rgba(255, 255, 255, 0.9);
 }
 
 @property --c1 { syntax: "<color>"; inherits: true; initial-value: #f5f3ef; }
@@ -101,7 +107,7 @@ section.active {
 
 
 body {
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: var(--outil);
     max-width: none;
     margin: 0;
     color: #222;
@@ -119,12 +125,20 @@ input, select {
 }
 
 button {
-    padding: 8px 14px;
+    padding: 9px 18px;
     margin-right: 4px;
-    background: #222;
-    color: white;
-    border: none;
-    cursor: pointer;
+    background: none;
+    color: var(--encre);
+    border: 1px solid var(--trait-fort);
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+button:hover {
+    border-color: var(--encre);
 }
 
 ul {
@@ -916,4 +930,198 @@ a, button, input, select, textarea, summary, label {
 
 #contenu:has(#section-tenues.active) {
     max-width: none;
+}
+
+h1, h2,
+#intro-titre h1,
+#bloc-connexion h2,
+.intro-signature,
+#contenu h4,
+#apercu .apercu-nom {
+    font-family: var(--voix);
+    font-weight: 400;
+}
+
+#barre h1 {
+    font-size: 26px;
+    letter-spacing: 7px;
+}
+
+#intro-titre h1 {
+    font-size: 72px;
+    letter-spacing: 14px;
+}
+
+.intro-signature {
+    font-size: 15px;
+    letter-spacing: 1px;
+    text-transform: none;
+}
+
+#contenu h4 {
+    font-size: 19px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--encre);
+    font-weight: 400;
+}
+
+#intro-texte {
+    font-size: 15px;
+    line-height: 2;
+    font-weight: 300;
+}
+
+.et-titre,
+.lb,
+.invite-descendre,
+#filtres-precis summary,
+.univers {
+    font-family: var(--outil);
+    font-weight: 400;
+}
+
+#btn-ajouter,
+#btn-creer-tenue,
+#btn-connexion,
+#btn-confirmer {
+    background: var(--vif);
+    color: white;
+    border-color: var(--vif);
+}
+
+#btn-ajouter:hover,
+#btn-creer-tenue:hover,
+#btn-connexion:hover,
+#btn-confirmer:hover {
+    background: hsl(350, 45%, 26%);
+    border-color: hsl(350, 45%, 26%);
+}
+
+.choix.retenu,
+.onglet-mode.actif,
+.filtre:hover {
+    background: var(--vif);
+    color: white;
+    border-color: var(--vif);
+}
+
+.onglet-actif,
+.univers.actif {
+    color: var(--vif);
+}
+
+.etiquette.active {
+    border-bottom-color: var(--vif);
+    border-bottom-width: 2px;
+}
+
+.nuance.choisie {
+    outline-color: var(--vif);
+}
+
+.piece:hover {
+    border-bottom-color: var(--vif);
+    color: var(--vif);
+    background: none;
+}
+
+#barre-recherche:focus {
+    border-color: var(--vif);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.09);
+}
+
+#zone-frequence {
+    border-left-color: var(--vif);
+}
+
+.bloc-categorie,
+.bloc-filtre,
+.groupe-alt {
+    background: var(--surface);
+    border: 1px solid var(--trait);
+    border-radius: 4px;
+}
+
+#contenu input[type="text"],
+#contenu select {
+    background: var(--surface);
+    border: 1px solid var(--trait);
+    border-radius: 3px;
+    font-family: inherit;
+    color: var(--encre);
+    transition: border-color 0.2s;
+}
+
+#contenu input[type="text"]:focus,
+#contenu select:focus {
+    outline: none;
+    border-color: var(--vif);
+    background: var(--surface-forte);
+}
+
+.filtre {
+    background: none;
+    color: var(--encre-moyenne);
+    border: 1px solid var(--trait);
+}
+
+.btn-supprimer,
+.btn-supprimer-tenue,
+.btn-modifier,
+.btn-modifier-tenue {
+    background: none;
+    color: var(--encre-legere);
+    border: 1px solid var(--trait);
+    padding: 3px 8px;
+    font-size: 11px;
+}
+
+.btn-supprimer:hover,
+.btn-supprimer-tenue:hover {
+    color: var(--vif);
+    border-color: var(--vif);
+}
+
+.echelle {
+    margin: 22px 0;
+    max-width: 560px;
+}
+
+.ech-titre {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--encre-legere);
+    margin-bottom: 8px;
+}
+
+.ech-rail {
+    display: flex;
+    border-bottom: 1px solid var(--trait);
+}
+
+.ech-cran {
+    flex: 1;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    margin: 0;
+    padding: 8px 4px 10px;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+    color: var(--encre-legere);
+    transition: color 0.25s, border-color 0.25s;
+}
+
+.ech-cran:hover {
+    color: var(--encre);
+    border-color: var(--trait-fort);
+}
+
+.ech-cran.retenu {
+    color: var(--vif);
+    border-color: var(--vif);
 }
