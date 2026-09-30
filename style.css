@@ -1125,3 +1125,62 @@ h1, h2,
     color: var(--vif);
     border-color: var(--vif);
 }
+
+#p-brasG, #p-brasD,
+#p-cuisseG, #p-cuisseD,
+#p-jambeG, #p-jambeD,
+#p-piedG, #p-piedD,
+#p-buste, #p-tete, #p-cou, #p-taille, #p-bassin {
+    transition: transform 0.9s ease-in-out;
+}
+
+#apercu svg.anime #p-brasG { animation: balanceG 3.4s ease-in-out infinite; }
+#apercu svg.anime #p-brasD { animation: balanceD 3.4s ease-in-out infinite; }
+#apercu svg.anime #p-cuisseG { animation: pasG 3.4s ease-in-out infinite; }
+#apercu svg.anime #p-cuisseD { animation: pasD 3.4s ease-in-out infinite; }
+#apercu svg.anime #p-jambeG { animation: genouG 3.4s ease-in-out infinite; }
+#apercu svg.anime #p-jambeD { animation: genouD 3.4s ease-in-out infinite; }
+#apercu svg.anime #p-tete,
+#apercu svg.anime #p-cou,
+#apercu svg.anime #p-buste { animation: respire 3s ease-in-out infinite; }
+
+@keyframes balanceG {
+    0%, 100% { transform: rotate(10deg); }
+    50% { transform: rotate(-12deg); }
+}
+
+@keyframes balanceD {
+    0%, 100% { transform: rotate(-12deg); }
+    50% { transform: rotate(10deg); }
+}
+
+@keyframes pasG {
+    0%, 100% { transform: rotate(-14deg); }
+    50% { transform: rotate(16deg); }
+}
+
+@keyframes pasD {
+    0%, 100% { transform: rotate(16deg); }
+    50% { transform: rotate(-14deg); }
+}
+
+@keyframes genouG {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(18deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(2deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes genouD {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(2deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(18deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes respire {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}

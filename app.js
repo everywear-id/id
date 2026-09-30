@@ -1076,6 +1076,8 @@ function familleDe(c) {
 }
 
 let teinteChoisie = "";
+let minuteurVie = null;
+let vieActive = false;
 
 function afficherNuances(famille) {
     let zone = document.getElementById("zone-nuances");
@@ -1126,14 +1128,48 @@ function couleurApercu() {
 let zonesMannequin = {
     tete: "M80 50 A20 20 0 1 0 120 50 A20 20 0 1 0 80 50 Z",
     cou: "M93 71 L107 71 L107 80 L93 80 Z",
-    bras: "M92 94 L60 160 L67 164 L97 100 Z M108 94 L140 160 L133 164 L103 100 Z",
+    brasG: "M92 94 L60 160 L67 164 L97 100 Z",
+    brasD: "M108 94 L140 160 L133 164 L103 100 Z",
     buste: "M100 82 L143 190 L57 190 Z",
     taille: "M57 191 L143 191 L146 196 L54 196 Z",
     bassin: "M54 197 L146 197 L156 222 L44 222 Z",
-    cuisses: "M80 224 L92 224 L92 280 L80 280 Z M108 224 L120 224 L120 280 L108 280 Z",
-    jambes: "M80 283 L92 283 L92 340 L80 340 Z M108 283 L120 283 L120 340 L108 340 Z",
-    pieds: "M74 343 L94 343 L94 352 L74 352 Z M106 343 L126 343 L126 352 L106 352 Z"
+    cuisseG: "M80 224 L92 224 L92 280 L80 280 Z",
+    cuisseD: "M108 224 L120 224 L120 280 L108 280 Z",
+    jambeG: "M80 283 L92 283 L92 340 L80 340 Z",
+    jambeD: "M108 283 L120 283 L120 340 L108 340 Z",
+    piedG: "M74 343 L94 343 L94 352 L74 352 Z",
+    piedD: "M106 343 L126 343 L126 352 L106 352 Z"
 };
+
+let pivots = {
+    brasG: "92px 97px",
+    brasD: "108px 97px",
+    cuisseG: "86px 224px",
+    cuisseD: "114px 224px",
+    jambeG: "86px 283px",
+    jambeD: "114px 283px",
+    piedG: "84px 343px",
+    piedD: "116px 343px"
+};
+
+let zonesDoubles = {
+    bras: ["brasG", "brasD"],
+    cuisses: ["cuisseG", "cuisseD"],
+    jambes: ["jambeG", "jambeD"],
+    pieds: ["piedG", "piedD"]
+};
+
+function zonesReelles(liste) {
+    let sorties = [];
+    for (let i = 0; i < liste.length; i++) {
+        if (zonesDoubles[liste[i]]) {
+            sorties = sorties.concat(zonesDoubles[liste[i]]);
+        } else {
+            sorties.push(liste[i]);
+        }
+    }
+    return sorties;
+}
 
 let tenueComplete = ["buste", "bras", "bassin", "cuisses", "jambes"];
 
@@ -1178,7 +1214,7 @@ function zonesDe(categorie, sousCategorie) {
 }
 
 function dessinerApercu() {
-    let couvertes = zonesDe(champCategorie.value, champSousCategorie.value);
+    let couvertes = zonesReelles(zonesDe(champCategorie.value, champSousCategorie.value));
     let couleur = couleurApercu();
     let svg = "<svg viewBox='0 0 200 380'>";
 
@@ -1186,9 +1222,9 @@ function dessinerApercu() {
     for (let i = 0; i < noms.length; i++) {
         let zone = noms[i];
         if (couvertes.indexOf(zone) !== -1) {
-            svg = svg + "<path d='" + zonesMannequin[zone] + "' fill='" + couleur + "' class='piece-apercu'/>";
+            svg = svg + "<path id='p-" + zone + "' d='" + zonesMannequin[zone] + "' fill='" + couleur + "' class='piece-apercu' style='transform-origin:" + (pivots[zone] || "100 200") + "'/>";
         } else {
-            svg = svg + "<path d='" + zonesMannequin[zone] + "' class='mannequin'/>";
+            svg = svg + "<path id='p-" + zone + "' d='" + zonesMannequin[zone] + "' class='mannequin' style='transform-origin:" + (pivots[zone] || "100 200") + "'/>";
         }
     }
     svg = svg + "</svg>";
@@ -1198,6 +1234,10 @@ function dessinerApercu() {
     }
 
     document.getElementById("apercu").innerHTML = svg;
+        if (vieActive) {
+        let dessin = document.querySelector("#apercu svg");
+        if (dessin) { dessin.classList.add("anime"); }
+    }
 }
 
 champSousCategorie.addEventListener("input", dessinerApercu);
@@ -1900,3 +1940,27 @@ function rafraichirEchelles() {
 
 brancherEchelles();
 rafraichirEchelles();
+
+function reveiller() {
+    let svg = document.querySelector("#apercu svg");
+    if (svg) { svg.classList.add("anime"); }
+    vieActive = true;
+}
+
+function endormir() {
+    let svg = document.querySelector("#apercu svg");
+    if (svg) { svg.classList.remove("anime"); }
+    vieActive = false;
+}
+
+function relancerAttente() {
+    endormir();
+    clearTimeout(minuteurVie);
+    minuteurVie = setTimeout(reveiller, 8000);
+}
+
+document.addEventListener("mousemove", relancerAttente);
+document.addEventListener("keydown", relancerAttente);
+document.addEventListener("click", relancerAttente);
+
+relancerAttente();
