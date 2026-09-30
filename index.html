@@ -65,9 +65,22 @@
 
         <nav id="barre">
             <h1>I_D</h1>
-            <button class="onglet" data-section="tenues">Tenues</button>
-            <button class="onglet" data-section="inventaire">Inventaire</button>
-            <button class="onglet" data-section="communaute">Communauté</button>
+
+            <div class="groupe-nav">
+                <button class="univers actif" data-univers="individuel">Individuel</button>
+                <div class="sous-nav" data-pour="individuel">
+                    <button class="onglet" data-section="tenues">Tenues</button>
+                    <button class="onglet" data-section="inventaire">Inventaire</button>
+                </div>
+            </div>
+
+            <div class="groupe-nav">
+                <button class="univers" data-univers="communaute">Communauté</button>
+                <div class="sous-nav" data-pour="communaute">
+                    <button class="onglet" data-section="communaute">Découvrir</button>
+                </div>
+            </div>
+
             <button id="btn-deconnexion">Se déconnecter</button>
         </nav>
 
@@ -75,85 +88,101 @@
 
             <section id="section-tenues">
 
-                <h4>Créer une tenue</h4>
-                <input id="champ-tenue-nom" type="text" placeholder="Nom de la tenue">
-                <div id="zone-tenue-vetements"></div>
-                <select id="champ-occasion">
-                    <option value="">Occasion...</option>
-                    <option value="Quotidien">Quotidien</option>
-                    <option value="Travail">Travail</option>
-                    <option value="Date">Date</option>
-                    <option value="Soiree">Soirée</option>
-                    <option value="Sophistiqué">Sophistiqué</option>
-                    <option value="Sport">Sport</option>
-                </select>
+                <div class="plan" id="plan-recherche">
+                    <input id="barre-recherche" type="text" placeholder="un rencard en automne, plutôt sobre">
+                    <p id="lecture-recherche"></p>
+                    <div id="resultats-recherche"></div>
+                    <p class="invite-descendre">composer une tenue</p>
+                </div>
 
-                <select id="champ-saison" multiple size="4">
-                    <option value="Printemps">Printemps</option>
-                    <option value="Été">Été</option>
-                    <option value="Automne">Automne</option>
-                    <option value="Hiver">Hiver</option>
-                </select>
+                <div class="plan" id="plan-creation">
+                    <h4>Composer une tenue</h4>
+                    <input id="champ-tenue-nom" type="text" placeholder="Nom de la tenue">
+                    <input id="recherche-piece" type="text" placeholder="Filtrer : marque, type, couleur...">
+                    <div id="zone-tenue-vetements"></div>
 
-                <select id="champ-registre">
-                    <option value="">Registre...</option>
-                    <option value="Décontracté">Décontracté</option>
-                    <option value="Intermédiaire">Intermédiaire</option>
-                    <option value="Habillé">Habillé</option>
-                </select>
+                    <select id="champ-occasion">
+                        <option value="">Occasion...</option>
+                        <option value="Quotidien">Quotidien</option>
+                        <option value="Travail">Travail</option>
+                        <option value="Date">Date</option>
+                        <option value="Soiree">Soirée</option>
+                        <option value="Sophistiqué">Sophistiqué</option>
+                        <option value="Sport">Sport</option>
+                    </select>
 
-                <select id="champ-eclat">
-                    <option value="">Éclat...</option>
-                    <option value="Discret">Discret</option>
-                    <option value="Équilibré">Équilibré</option>
-                    <option value="Affirmé">Affirmé</option>
-                </select>
-                <button id="btn-creer-tenue">Créer</button>
-                <button id="btn-annuler-tenue" style="display:none">Annuler</button>
+                    <select id="champ-saison" multiple size="4">
+                        <option value="Printemps">Printemps</option>
+                        <option value="Été">Été</option>
+                        <option value="Automne">Automne</option>
+                        <option value="Hiver">Hiver</option>
+                    </select>
 
-                <h4>Rechercher une tenue</h4>
+                    <select id="champ-registre">
+                        <option value="">Registre...</option>
+                        <option value="Décontracté">Décontracté</option>
+                        <option value="Intermédiaire">Intermédiaire</option>
+                        <option value="Habillé">Habillé</option>
+                    </select>
 
-                <select id="rech-occasion">
-                    <option value="">Toute occasion</option>
-                    <option value="Quotidien">Quotidien</option>
-                    <option value="Travail">Travail</option>
-                    <option value="Date">Date</option>
-                    <option value="Soirée">Soirée</option>
-                    <option value="Cérémonie">Cérémonie</option>
-                    <option value="Sport">Sport</option>
-                </select>
+                    <select id="champ-eclat">
+                        <option value="">Éclat...</option>
+                        <option value="Discret">Discret</option>
+                        <option value="Équilibré">Équilibré</option>
+                        <option value="Affirmé">Affirmé</option>
+                    </select>
 
-                <select id="rech-saison">
-                    <option value="">Toute saison</option>
-                    <option value="Printemps">Printemps</option>
-                    <option value="Été">Été</option>
-                    <option value="Automne">Automne</option>
-                    <option value="Hiver">Hiver</option>
-                </select>
+                    <button id="btn-creer-tenue">Créer</button>
+                    <button id="btn-annuler-tenue" style="display:none">Annuler</button>
 
-                <select id="rech-registre">
-                    <option value="">Tout registre</option>
-                    <option value="Décontracté">Décontracté</option>
-                    <option value="Intermédiaire">Intermédiaire</option>
-                    <option value="Habillé">Habillé</option>
-                </select>
+                    <p class="invite-descendre">toutes mes tenues</p>
+                </div>
 
-                <select id="rech-eclat">
-                    <option value="">Tout éclat</option>
-                    <option value="Discret">Discret</option>
-                    <option value="Équilibré">Équilibré</option>
-                    <option value="Affirmé">Affirmé</option>
-                </select>
+                <div class="plan" id="plan-liste">
+                    <h4>Mes tenues</h4>
 
-                <button id="btn-rechercher">Rechercher</button>
-                <button id="btn-reset">Tout voir</button>
+                    <details id="filtres-precis">
+                        <summary>Filtres précis</summary>
 
-                <div id="zone-frequence"></div>
+                        <select id="rech-occasion">
+                            <option value="">Toute occasion</option>
+                            <option value="Quotidien">Quotidien</option>
+                            <option value="Travail">Travail</option>
+                            <option value="Date">Date</option>
+                            <option value="Soiree">Soirée</option>
+                            <option value="Sophistiqué">Sophistiqué</option>
+                            <option value="Sport">Sport</option>
+                        </select>
 
-            <details id="bloc-tenues" class="bloc-categorie">
-                <summary id="titre-tenues">Mes tenues</summary>
-                <ul id="liste-tenues"></ul>
-            </details>
+                        <select id="rech-saison">
+                            <option value="">Toute saison</option>
+                            <option value="Printemps">Printemps</option>
+                            <option value="Été">Été</option>
+                            <option value="Automne">Automne</option>
+                            <option value="Hiver">Hiver</option>
+                        </select>
+
+                        <select id="rech-registre">
+                            <option value="">Tout registre</option>
+                            <option value="Décontracté">Décontracté</option>
+                            <option value="Intermédiaire">Intermédiaire</option>
+                            <option value="Habillé">Habillé</option>
+                        </select>
+
+                        <select id="rech-eclat">
+                            <option value="">Tout éclat</option>
+                            <option value="Discret">Discret</option>
+                            <option value="Équilibré">Équilibré</option>
+                            <option value="Affirmé">Affirmé</option>
+                        </select>
+
+                        <button id="btn-rechercher">Appliquer</button>
+                        <button id="btn-reset">Tout voir</button>
+                    </details>
+
+                    <div id="zone-frequence"></div>
+                    <ul id="liste-tenues"></ul>
+                </div>
 
             </section>
 

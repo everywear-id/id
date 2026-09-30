@@ -117,6 +117,7 @@ let rechRegistre = document.getElementById("rech-registre");
 let rechEclat = document.getElementById("rech-eclat");
 let btnRechercher = document.getElementById("btn-rechercher");
 let btnReset = document.getElementById("btn-reset");
+let barreRecherche = document.getElementById("barre-recherche");
 
 let btnExporter = document.getElementById("btn-exporter");
 
@@ -320,33 +321,22 @@ btnCreerTenue.addEventListener("click", async function() {
 });
 
 btnRechercher.addEventListener("click", function() {
-    let resultat = tenues.filter(function(t) {
-        if (rechOccasion.value !== "" && t.occasion !== rechOccasion.value) {
-            return false;
-        }
-        if (rechSaison.value !== "" && t.saison.indexOf(rechSaison.value) === -1) {
-            return false;
-        }
-        if (rechRegistre.value !== "" && t.registre !== rechRegistre.value) {
-            return false;
-        }
-        if (rechEclat.value !== "" && t.eclat !== rechEclat.value) {
-            return false;
-        }
-        return true;
-    });
-    document.getElementById("bloc-tenues").open = true;
-    afficherTenues(resultat);
+    let criteres = {
+        occasion: rechOccasion.value,
+        registre: rechRegistre.value,
+        eclat: rechEclat.value,
+        saison: rechSaison.value ? [rechSaison.value] : []
+    };
+    lectureRecherche.innerHTML = "";
+    afficherTenues(filtrerTenues(criteres));
 });
 
 btnReset.addEventListener("click", function() {
-    document.getElementById("bloc-tenues").open = true;
     afficherTenues(tenues);
 });
 
 function afficherTenues(items) {
     listeTenues.innerHTML = "";
-    document.getElementById("titre-tenues").innerHTML = "Mes tenues (" + items.length + ")";
     for (let i = 0; i < items.length; i++) {       
     listeTenues.innerHTML = listeTenues.innerHTML + "<li>" + pastillesTenue(items[i]) + "<strong>" + items[i].nom + "</strong> — " + items[i].occasion + " — " + items[i].saison.join("/") + " — " + items[i].registre + " — " + items[i].eclat + "<br>" + composerTenue(items[i]) + " <button class='btn-modifier-tenue' data-id='" + items[i].id + "'>modifier</button> <button class='btn-supprimer-tenue' data-id='" + items[i].id + "'>x</button></li>";
     }
@@ -382,6 +372,10 @@ function afficherSection(nom) {
             onglets[i].classList.add("onglet-actif");
         }
     }
+    
+    if (nom === "tenues" && barreRecherche) {
+        barreRecherche.focus();
+    }
 }
 
 for (let i = 0; i < onglets.length; i++) {
@@ -390,7 +384,35 @@ for (let i = 0; i < onglets.length; i++) {
     });
 }
 
-afficherSection("tenues");
+function ouvrirUnivers(nom) {
+    let univers = document.querySelectorAll(".univers");
+    for (let i = 0; i < univers.length; i++) {
+        univers[i].classList.toggle("actif", univers[i].dataset.univers === nom);
+    }
+    let sousNavs = document.querySelectorAll(".sous-nav");
+    for (let i = 0; i < sousNavs.length; i++) {
+        sousNavs[i].classList.toggle("ouvert", sousNavs[i].dataset.pour === nom);
+    }
+    let premier = document.querySelector(".sous-nav[data-pour='" + nom + "'] .onglet");
+    if (premier) {
+        afficherSection(premier.dataset.section);
+    }
+}
+
+let boutonsUnivers = document.querySelectorAll(".univers");
+for (let i = 0; i < boutonsUnivers.length; i++) {
+    boutonsUnivers[i].addEventListener("click", function() {
+        ouvrirUnivers(this.dataset.univers);
+    });
+}
+
+for (let i = 0; i < onglets.length; i++) {
+    onglets[i].addEventListener("click", function() {
+        afficherSection(this.dataset.section);
+    });
+}
+
+ouvrirUnivers("individuel");
 
 function activerClicPieces() {
     let pieces = document.querySelectorAll(".piece");
@@ -1675,6 +1697,169 @@ function activerMode(mode) {
 }
 
 btnModeLigne.addEventListener("click", function() { activerMode("ligne"); });
+
+let recherchePiece = document.getElementById("recherche-piece");
+
+function correspond(v, mots) {
+    let champs = cleMarque(
+        (v.nom || "") + " " + (v.marque || "") + " " + (v.sousCategorie || "") + " " +
+        (v.categorie || "") + " " + (v.couleur || []).join(" ") + " " +
+        (v.teinte || "") + " " + (v.matiere || "") + " " + (v.nuance || "")
+    );
+    for (let i = 0; i < mots.length; i++) {
+        if (champs.indexOf(mots[i]) === -1) { return false; }
+    }
+    return true;
+}
+
+recherchePiece.addEventListener("input", function() {
+    let saisie = recherchePiece.value.trim();
+
+    if (saisie === "") {
+        remplirMenuVetements();
+        return;
+    }
+
+    let mots = saisie.split(" ").map(cleMarque).filter(function(m) { return m !== ""; });
+    let trouves = vetements.filter(function(v) { return correspond(v, mots); });
+
+    let coches = Array.from(document.querySelectorAll(".case-vetement:checked")).map(function(c) {
+        return Number(c.value);
+    });
+
+    zoneTenueVetements.innerHTML = "<div class='bloc-categorie'><h5>" + trouves.length +
+        " résultat(s)</h5>" + casesPour(trouves) + "</div>";
+
+    let cases = document.querySelectorAll(".case-vetement");
+    for (let i = 0; i < cases.length; i++) {
+        cases[i].checked = coches.indexOf(Number(cases[i].value)) !== -1;
+    }
+});
+
+let synonymes = {
+    occasion: {
+        "Quotidien": ["quotidien", "regulier", "regular", "usual", "basic", "basique", "normal", "journalier",
+            "tous les jours", "courant", "banal", "ordinaire", "journee", "daily", "everyday", "courses", "flemme"],
+        "Travail": ["travail", "boulot", "bureau", "job", "pro", "professionnel", "taf", "work", "office",
+            "salaryman", "salary man", "reunion", "entretien", "meeting", "corporate"],
+        "Date": ["date", "rencard", "rendez-vous", "diner", "restaurant", "resto", "amoureux", "seduction",
+            "premier rendez-vous", "tete a tete", "romantique", "dating"],
+        "Soiree": ["soiree", "soir", "fete", "party", "bar", "club", "sortie", "nuit", "anniversaire",
+            "occasion speciale", "special", "night", "birthday", "verre", "apero"],
+        "Sophistiqué": ["sophistique", "ceremonie", "mariage", "gala", "vernissage", "opera", "grande occasion",
+            "solennel", "bapteme", "enterrement", "funerailles", "protocole", "remise de prix"],
+        "Sport": ["sport", "sportif", "salle", "course a pied", "running", "gym", "entrainement", "match",
+            "randonnee", "footing", "workout", "training", "velo", "piscine"]
+    },
+    saison: {
+        "Printemps": ["printemps", "avril", "mai", "mars", "paques", "doux", "renouveau",
+            "spring", "giboulees", "fleurs"],
+        "Été": ["ete", "chaud", "chaleur", "canicule", "juillet", "aout", "juin", "plage", "vacances",
+            "soleil", "summer", "mer", "piscine", "festival", "terrasse"],
+        "Automne": ["automne", "octobre", "novembre", "septembre", "halloween", "toussaint", "pluie",
+            "frais", "feuilles", "fall", "autumn", "rentree", "brume"],
+        "Hiver": ["hiver", "froid", "neige", "janvier", "decembre", "fevrier", "noel", "reveillon",
+            "nouvel an", "gel", "glacial", "winter", "ski", "fetes"]
+    },
+    registre: {
+        "Décontracté": ["decontracte", "casual", "relax", "detente", "detendu", "cool", "chill", "simple",
+            "sportswear", "street", "informel", "confort", "tranquille"],
+        "Intermédiaire": ["intermediaire", "entre-deux", "smart casual", "mi-formel", "passe-partout",
+            "polyvalent", "ni trop ni trop peu", "moyen", "versatile"],
+        "Habillé": ["habille", "chic", "elegant", "classe", "formel", "costume", "costard", "tenue de ville",
+            "soigne", "distingue", "dressed", "smart", "cravate"]
+    },
+    eclat: {
+        "Discret": ["discret", "sobre", "neutre", "efface", "minimal", "passe inapercu", "basique",
+            "calme", "low key", "silencieux", "fondu"],
+        "Équilibré": ["equilibre", "mesure", "ni trop ni trop peu", "tempere",
+            "dose", "nuance"],
+        "Affirmé": ["affirme", "marque", "audacieux", "voyant", "fort", "assume", "statement",
+            "remarquable", "ose", "bold", "tranche", "flamboyant"]
+    }
+};
+
+function interpreterContexte(texte) {
+    let brut = cleMarque(texte);
+    let trouve = { occasion: "", saison: [], registre: "", eclat: "" };
+
+    let axes = Object.keys(synonymes);
+    for (let a = 0; a < axes.length; a++) {
+        let axe = axes[a];
+        let valeurs = Object.keys(synonymes[axe]);
+
+        for (let v = 0; v < valeurs.length; v++) {
+            let mots = synonymes[axe][valeurs[v]];
+            let touche = false;
+
+            for (let m = 0; m < mots.length; m++) {
+                if (brut.indexOf(cleMarque(mots[m])) !== -1) { touche = true; }
+            }
+            if (cleMarque(valeurs[v]) !== "" && brut.indexOf(cleMarque(valeurs[v])) !== -1) { touche = true; }
+
+            if (touche) {
+                if (axe === "saison") {
+                    if (trouve.saison.indexOf(valeurs[v]) === -1) { trouve.saison.push(valeurs[v]); }
+                } else if (trouve[axe] === "") {
+                    trouve[axe] = valeurs[v];
+                }
+            }
+        }
+    }
+
+    return trouve;
+}
+
+let lectureRecherche = document.getElementById("lecture-recherche");
+
+function filtrerTenues(criteres) {
+    return tenues.filter(function(t) {
+        if (criteres.occasion && t.occasion !== criteres.occasion) { return false; }
+        if (criteres.registre && t.registre !== criteres.registre) { return false; }
+        if (criteres.eclat && t.eclat !== criteres.eclat) { return false; }
+        if (criteres.saison && criteres.saison.length > 0) {
+            let commune = criteres.saison.filter(function(s) {
+                return t.saison.indexOf(s) !== -1;
+            });
+            if (commune.length === 0) { return false; }
+        }
+        return true;
+    });
+}
+
+barreRecherche.addEventListener("keydown", function(e) {
+    if (e.key !== "Enter") { return; }
+        document.getElementById("plan-recherche").classList.add("repliee");
+
+    let lu = interpreterContexte(barreRecherche.value);
+
+    let texte = "";
+    if (lu.occasion) { texte = texte + pastille("occasion", lu.occasion); }
+    if (lu.saison.length > 0) { texte = texte + pastille("saison", lu.saison.join(", ")); }
+    if (lu.registre) { texte = texte + pastille("registre", lu.registre); }
+    if (lu.eclat) { texte = texte + pastille("éclat", lu.eclat); }
+    if (texte === "") { texte = "<span class='lu'>rien de reconnu</span>"; }
+    lectureRecherche.innerHTML = texte;
+
+    afficherResultats(filtrerTenues(lu));
+});
+
+function afficherResultats(items) {
+    let zone = document.getElementById("resultats-recherche");
+    if (items.length === 0) {
+        zone.innerHTML = "<p class='resultat'>Aucune tenue ne correspond.</p>";
+        return;
+    }
+
+    let texte = "";
+    for (let i = 0; i < items.length; i++) {
+        texte = texte + "<div class='resultat'>" + pastillesTenue(items[i]) +
+            "<span>" + composerTenue(items[i]) + "</span></div>";
+    }
+    zone.innerHTML = texte;
+    activerClicPieces();
+}
+
 
 rafraichirEtiquettes();
 dessinerApercu();
