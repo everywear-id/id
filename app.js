@@ -1213,28 +1213,46 @@ function zonesDe(categorie, sousCategorie) {
     return zonesParCategorie[categorie] || [];
 }
 
+function trace(zone, couvertes, couleur) {
+    let dedans = couvertes.indexOf(zone) !== -1;
+    return "<path id='p-" + zone + "' d='" + zonesMannequin[zone] + "'" +
+        (dedans ? " fill='" + couleur + "' class='piece-apercu'" : " class='mannequin'") + "/>";
+}
+
 function dessinerApercu() {
     let couvertes = zonesReelles(zonesDe(champCategorie.value, champSousCategorie.value));
-    let couleur = couleurApercu();
-    let svg = "<svg viewBox='0 0 200 380'>";
+    let c = couleurApercu();
 
-    let noms = Object.keys(zonesMannequin);
-    for (let i = 0; i < noms.length; i++) {
-        let zone = noms[i];
-        if (couvertes.indexOf(zone) !== -1) {
-            svg = svg + "<path id='p-" + zone + "' d='" + zonesMannequin[zone] + "' fill='" + couleur + "' class='piece-apercu' style='transform-origin:" + (pivots[zone] || "100 200") + "'/>";
-        } else {
-            svg = svg + "<path id='p-" + zone + "' d='" + zonesMannequin[zone] + "' class='mannequin' style='transform-origin:" + (pivots[zone] || "100 200") + "'/>";
-        }
-    }
-    svg = svg + "</svg>";
+    let svg = "<svg viewBox='0 0 200 380'>" +
+        "<g class='promene'><g class='bob'>" +
+
+        "<g class='tronc'>" +
+            "<g class='tete-g'>" + trace("tete", couvertes, c) + trace("cou", couvertes, c) + "</g>" +
+            trace("buste", couvertes, c) +
+            "<g class='aG'>" + trace("brasG", couvertes, c) + "</g>" +
+            "<g class='aD'>" + trace("brasD", couvertes, c) + "</g>" +
+        "</g>" +
+
+        "<g class='hanches'>" +
+            trace("taille", couvertes, c) +
+            trace("bassin", couvertes, c) +
+            "<g class='cG'>" + trace("cuisseG", couvertes, c) +
+                "<g class='gG'>" + trace("jambeG", couvertes, c) + trace("piedG", couvertes, c) + "</g>" +
+            "</g>" +
+            "<g class='cD'>" + trace("cuisseD", couvertes, c) +
+                "<g class='gD'>" + trace("jambeD", couvertes, c) + trace("piedD", couvertes, c) + "</g>" +
+            "</g>" +
+        "</g>" +
+
+        "</g></g></svg>";
 
     if (champNom.value) {
         svg = svg + "<p class='apercu-nom'>" + champNom.value + "</p>";
     }
 
     document.getElementById("apercu").innerHTML = svg;
-        if (vieActive) {
+
+    if (vieActive) {
         let dessin = document.querySelector("#apercu svg");
         if (dessin) { dessin.classList.add("anime"); }
     }

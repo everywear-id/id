@@ -1126,61 +1126,34 @@ h1, h2,
     border-color: var(--vif);
 }
 
-#p-brasG, #p-brasD,
-#p-cuisseG, #p-cuisseD,
-#p-jambeG, #p-jambeD,
-#p-piedG, #p-piedD,
-#p-buste, #p-tete, #p-cou, #p-taille, #p-bassin {
-    transition: transform 0.9s ease-in-out;
-}
+#apercu .tronc { transform-origin: 100px 190px; }
+#apercu .hanches { transform-origin: 100px 200px; }
+#apercu .tete-g { transform-origin: 100px 76px; }
+#apercu .aG { transform-origin: 92px 97px; }
+#apercu .aD { transform-origin: 108px 97px; }
+#apercu .cG { transform-origin: 86px 224px; }
+#apercu .cD { transform-origin: 114px 224px; }
+#apercu .gG { transform-origin: 86px 283px; }
+#apercu .gD { transform-origin: 114px 283px; }
 
-#apercu svg.anime #p-brasG { animation: balanceG 3.4s ease-in-out infinite; }
-#apercu svg.anime #p-brasD { animation: balanceD 3.4s ease-in-out infinite; }
-#apercu svg.anime #p-cuisseG { animation: pasG 3.4s ease-in-out infinite; }
-#apercu svg.anime #p-cuisseD { animation: pasD 3.4s ease-in-out infinite; }
-#apercu svg.anime #p-jambeG { animation: genouG 3.4s ease-in-out infinite; }
-#apercu svg.anime #p-jambeD { animation: genouD 3.4s ease-in-out infinite; }
-#apercu svg.anime #p-tete,
-#apercu svg.anime #p-cou,
-#apercu svg.anime #p-buste { animation: respire 3s ease-in-out infinite; }
+#apercu svg.anime .promene { animation: traverse 7s ease-in-out infinite alternate; }
+#apercu svg.anime .bob { animation: rebond 1.1s ease-in-out infinite; }
+#apercu svg.anime .tronc { animation: tronc 1.1s ease-in-out infinite; }
+#apercu svg.anime .hanches { animation: hanches 1.1s ease-in-out infinite; }
+#apercu svg.anime .aG { animation: aG 1.1s ease-in-out infinite; }
+#apercu svg.anime .aD { animation: aD 1.1s ease-in-out infinite; }
+#apercu svg.anime .cG { animation: cG 1.1s ease-in-out infinite; }
+#apercu svg.anime .cD { animation: cD 1.1s ease-in-out infinite; }
+#apercu svg.anime .gG { animation: gG 1.1s ease-in-out infinite; }
+#apercu svg.anime .gD { animation: gD 1.1s ease-in-out infinite; }
 
-@keyframes balanceG {
-    0%, 100% { transform: rotate(10deg); }
-    50% { transform: rotate(-12deg); }
-}
-
-@keyframes balanceD {
-    0%, 100% { transform: rotate(-12deg); }
-    50% { transform: rotate(10deg); }
-}
-
-@keyframes pasG {
-    0%, 100% { transform: rotate(-14deg); }
-    50% { transform: rotate(16deg); }
-}
-
-@keyframes pasD {
-    0%, 100% { transform: rotate(16deg); }
-    50% { transform: rotate(-14deg); }
-}
-
-@keyframes genouG {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(18deg); }
-    50% { transform: rotate(0deg); }
-    75% { transform: rotate(2deg); }
-    100% { transform: rotate(0deg); }
-}
-
-@keyframes genouD {
-    0% { transform: rotate(0deg); }
-    25% { transform: rotate(2deg); }
-    50% { transform: rotate(0deg); }
-    75% { transform: rotate(18deg); }
-    100% { transform: rotate(0deg); }
-}
-
-@keyframes respire {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-2px); }
-}
+@keyframes traverse { 0% { transform: translateX(-38px); } 100% { transform: translateX(38px); } }
+@keyframes rebond { 0%, 50%, 100% { transform: translateY(0); } 25%, 75% { transform: translateY(-3px); } }
+@keyframes tronc { 0%, 100% { transform: rotate(2deg); } 50% { transform: rotate(-2deg); } }
+@keyframes hanches { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes aG { 0%, 100% { transform: rotate(14deg); } 50% { transform: rotate(-16deg); } }
+@keyframes aD { 0%, 100% { transform: rotate(-16deg); } 50% { transform: rotate(14deg); } }
+@keyframes cG { 0%, 100% { transform: rotate(-18deg); } 50% { transform: rotate(20deg); } }
+@keyframes cD { 0%, 100% { transform: rotate(20deg); } 50% { transform: rotate(-18deg); } }
+@keyframes gG { 0% { transform: rotate(2deg); } 25% { transform: rotate(26deg); } 50% { transform: rotate(1deg); } 100% { transform: rotate(2deg); } }
+@keyframes gD { 0% { transform: rotate(1deg); } 50% { transform: rotate(2deg); } 75% { transform: rotate(26deg); } 100% { transform: rotate(1deg); } }
